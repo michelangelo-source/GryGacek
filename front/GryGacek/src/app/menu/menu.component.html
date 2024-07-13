@@ -1,0 +1,23 @@
+<div class=" h-dvh w-dvh flex justify-center items-center ">
+    <div class="
+        flex flex-col justify-center items-center
+        py-2
+        rounded-lg
+        bg-rose-900 
+        h-4/5
+        w-dvw xl:w-2/5 lg:w-2/5 md:w-3/5  sm:w-4/5"
+         >
+         @for(game of games; track $index ){
+        <div class="
+        basis-1/6 
+        flex justify-center items-center 
+        my-2 rounded-lg
+        bg-rose-950 text-stone-50 hover:bg-red-800
+        w-4/5 h-4/5"
+          (click)="chsoen_game(game.name)">
+            {{game.name}}
+         </div>
+        }
+        
+    </div>
+</div>
