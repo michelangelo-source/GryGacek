@@ -1,1 +1,20 @@
-<p>sttt works!</p>
+<div class="w-svh h-svh flex items-center justify-center">
+  <table id="board" class="">
+    @for (boards of boards_table;track boards;let iid=$index ) { @if(iid%3==0){
+    <tr></tr>
+    }
+    <td>
+      <table>
+        @for(board of boards;track $index){ @if($index%3==0){
+        <tr></tr>
+        }
+        <td
+          class="w-12 h-12 border-2 border-black"
+          (click)="add_chart(iid, $index)"
+        ></td>
+        }
+      </table>
+    </td>
+    }
+  </table>
+</div>
