@@ -8,9 +8,8 @@ describe('ClickSlideComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ClickSlideComponent]
-    })
-    .compileComponents();
+      imports: [ClickSlideComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ClickSlideComponent);
     component = fixture.componentInstance;

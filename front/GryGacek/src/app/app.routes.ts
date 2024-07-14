@@ -6,11 +6,9 @@ import { StttComponent } from './gamesComponents/sttt/sttt.component';
 import { KulkiComponent } from './gamesComponents/kulki/kulki.component';
 
 export const routes: Routes = [
-    {path:'Tetris',component:TetrisComponent},
-    {path:'ClickAndSlide',component:ClickSlideComponent},
-    {path:'SuperTicTacToe',component:StttComponent},
-    {path:'3DTicTacToe',component:Ttt3dComponent},
-    {path:'Kulki',component:KulkiComponent},
-
-
+  { path: 'Tetris', component: TetrisComponent },
+  { path: 'ClickAndSlide', component: ClickSlideComponent },
+  { path: 'SuperTicTacToe', component: StttComponent },
+  { path: '3DTicTacToe', component: Ttt3dComponent },
+  { path: 'Kulki', component: KulkiComponent },
 ];

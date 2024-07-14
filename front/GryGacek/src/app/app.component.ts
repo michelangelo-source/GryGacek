@@ -10,14 +10,22 @@ import { BackToMenuComponent } from './back-to-menu/back-to-menu.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MenuComponent,TetrisComponent,Ttt3dComponent,StttComponent,ClickSlideComponent,KulkiComponent,BackToMenuComponent],
+  imports: [
+    MenuComponent,
+    TetrisComponent,
+    Ttt3dComponent,
+    StttComponent,
+    ClickSlideComponent,
+    KulkiComponent,
+    BackToMenuComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'GryGacek';
-  chosen_game:string="none"
-  change_game(new_game:string){
-    this.chosen_game=new_game
+  chosen_game: string = 'none';
+  change_game(new_game: string) {
+    this.chosen_game = new_game;
   }
 }

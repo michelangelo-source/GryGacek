@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './click-slide.component.html',
-  styleUrl: './click-slide.component.scss'
+  styleUrl: './click-slide.component.scss',
 })
-export class ClickSlideComponent {
-
-}
+export class ClickSlideComponent {}

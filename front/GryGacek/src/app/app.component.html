@@ -1,24 +1,18 @@
-@switch (chosen_game) {
-    @case ("none") {
-        <app-menu (new_game)="change_game($event)"></app-menu>
-    }
-    @case ("Tetris") {
-        <app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
-        <app-tetris></app-tetris>
-    }
-    @case ("Kulki") {
-        <app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
-        <app-kulki></app-kulki>
-    }
-    @case ("Super Tic Tac Toe") {
-        <app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
-        <app-sttt></app-sttt>
-    }@case ("3D Tic Tac Toe") {
-        <app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
-        <app-ttt3d></app-ttt3d>
-    }
-    @case ("Click And Slide") {
-        <app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
-        <app-click-slide></app-click-slide>
-    }
-}
+@switch (chosen_game) { @case ("none") {
+<app-menu (new_game)="change_game($event)"></app-menu>
+} @case ("Tetris") {
+<app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
+<app-tetris></app-tetris>
+} @case ("Kulki") {
+<app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
+<app-kulki></app-kulki>
+} @case ("Super Tic Tac Toe") {
+<app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
+<app-sttt></app-sttt>
+}@case ("3D Tic Tac Toe") {
+<app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
+<app-ttt3d></app-ttt3d>
+} @case ("Click And Slide") {
+<app-back-to-menu (back)="change_game($event)"></app-back-to-menu>
+<app-click-slide></app-click-slide>
+} }

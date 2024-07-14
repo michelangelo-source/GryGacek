@@ -8,9 +8,8 @@ describe('BackToMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BackToMenuComponent]
-    })
-    .compileComponents();
+      imports: [BackToMenuComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BackToMenuComponent);
     component = fixture.componentInstance;
