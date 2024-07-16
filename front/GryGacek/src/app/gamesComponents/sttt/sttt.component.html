@@ -1,20 +1,71 @@
-<div class="w-svh h-svh flex items-center justify-center">
-  <table id="board" class="">
-    @for (boards of boards_table;track boards;let iid=$index ) { @if(iid%3==0){
-    <tr></tr>
+<div class="w-svh h-svh flex items-center flex-col">
+  <div class="h-1/6 flex justify-center items-center">
+    @if(who_moves){
+    <h1 class="text-4xl">circle moves</h1>
+    }@else {
+    <h1 class="text-4xl">cross moves</h1>
     }
-    <td>
-      <table>
-        @for(board of boards;track $index){ @if($index%3==0){
-        <tr></tr>
-        }
-        <td
-          class="w-12 h-12 border-2 border-black"
-          (click)="add_chart(iid, $index)"
-        ></td>
-        }
-      </table>
-    </td>
-    }
-  </table>
+  </div>
+  <div>
+    <table id="board" class="">
+      @for (cells of cell_table;track cells;let iid=$index ) { @if(iid%3==0){
+      <tr></tr>
+      }
+      <td id="{{ iid }}">
+        <table class="">
+          @if(big_cells_results[iid].char=='none'){ @for(cell of cells;track
+          $index){ @if($index%3==0){
+          <tr></tr>
+          } @switch (cell.char) { @case ("none") { @if(cell.is_active){
+          <td
+            class="w-12 h-12 border-2 border-black bg-lime-300"
+            (click)="add_chart(iid, $index)"
+          ></td>
+          }@else{
+          <td class="w-12 h-12 border-2 border-black"></td>
+          } } @case ("cross") {
+          <td
+            class="items-center w-12 h-12 border-2 border-black font-black text-3xl"
+          >
+            ✖️
+          </td>
+          }@case ("circle") {
+          <td
+            class="items-center w-12 h-12 border-2 border-black font-black text-3xl"
+          >
+            ⭕
+          </td>
+          } } }}@else { @if ( big_cells_results[iid].char=='cross' ) {
+          <tr></tr>
+          <td>
+            <div
+              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
+            >
+              ✖️
+            </div>
+          </td>
+          } @if ( big_cells_results[iid].char=='circle' ) {
+          <tr></tr>
+          <td>
+            <div
+              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
+            >
+              ⭕
+            </div>
+          </td>
+          }@if ( big_cells_results[iid].char=='tie' ) {
+          <tr></tr>
+          <td>
+            <div
+              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
+            >
+              ✅
+            </div>
+          </td>
+          } }
+        </table>
+      </td>
+      }
+    </table>
+  </div>
 </div>
