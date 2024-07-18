@@ -1,1 +1,26 @@
-<p>tetris works!</p>
+<div class="mt-10 w-svh flex items-center justify-center flex-col">
+  @for (row of board;track row;let rowId=$index ){
+
+  <div class="flex flex-row">
+    @for(cell of row;track $index){ @switch (cell.color) { @case ("black") {
+    <div class="w-6 h-6 border border-black bg-black"></div>
+    }@case ("white") {
+    <div class="w-6 h-6 border border-black"></div>
+    }@case ("blue") {
+    <div class="w-6 h-6 border border-black bg-blue-700"></div>
+    }@case ("green") {
+    <div class="w-6 h-6 border border-black bg-green-700"></div>
+    }@case ("red") {
+    <div class="w-6 h-6 border border-black bg-red-700"></div>
+    }@case ("yellow") {
+    <div class="w-6 h-6 border border-black bg-yellow-500"></div>
+    }@case ("purple") {
+    <div class="w-6 h-6 border border-black bg-purple-700"></div>
+    }@case ("orange") {
+    <div class="w-6 h-6 border border-black bg-orange-600"></div>
+    }@case ("navy") {
+    <div class="w-6 h-6 border border-black bg-blue-950"></div>
+    }} }
+  </div>
+  }
+</div>

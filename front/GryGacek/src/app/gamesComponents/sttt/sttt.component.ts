@@ -11,7 +11,7 @@ import { stttCell } from '../../../models/stttCell';
 export class StttComponent {
   cell_table: stttCell[][] = [];
   who_moves: boolean = true;
-  private big_cells_count = { cross: 0, circle: 0 };
+  private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
   ngOnInit() {
     for (let i = 0; i < 9; i++) {
@@ -104,6 +104,7 @@ export class StttComponent {
       }
       if (check_tie) {
         this.big_cells_results[iid].char = 'tie';
+        this.big_cells_count.tie++;
       }
     }
 
@@ -139,7 +140,12 @@ export class StttComponent {
         window.location.reload();
       }
     }
-    if (this.big_cells_count.circle + this.big_cells_count.cross >= 9) {
+    if (
+      this.big_cells_count.circle +
+        this.big_cells_count.cross +
+        this.big_cells_count.tie >=
+      9
+    ) {
       alert('remis');
       window.location.reload();
     }
