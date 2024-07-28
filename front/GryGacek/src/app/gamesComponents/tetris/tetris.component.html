@@ -1,4 +1,5 @@
 <div class="mt-10 w-svh flex items-center justify-center flex-col">
+  <h1>Linie: {{ line_removed }} Level {{ level }}</h1>
   @for (row of board;track row;let rowId=$index ){
 
   <div class="flex flex-row">
@@ -7,19 +8,33 @@
     }@case ("white") {
     <div class="w-6 h-6 border border-black"></div>
     }@case ("blue") {
-    <div class="w-6 h-6 border border-black bg-blue-700"></div>
+    <div class="w-6 h-6 border border-black bg-blue-700">
+      <img [src]="blue_path" width="24" height="24" alt="blue" />
+    </div>
     }@case ("green") {
-    <div class="w-6 h-6 border border-black bg-green-700"></div>
+    <div class="w-6 h-6 border border-black bg-green-700">
+      <img [src]="green_path" width="24" height="24" alt="green" />
+    </div>
     }@case ("red") {
-    <div class="w-6 h-6 border border-black bg-red-700"></div>
+    <div class="w-6 h-6 border border-black bg-red-700">
+      <img [src]="red_path" width="24" height="24" alt="red" />
+    </div>
     }@case ("yellow") {
-    <div class="w-6 h-6 border border-black bg-yellow-500"></div>
+    <div class="w-6 h-6 border border-black bg-yellow-500">
+      <img [src]="yellow_path" width="24" height="24" alt="yellow" />
+    </div>
     }@case ("purple") {
-    <div class="w-6 h-6 border border-black bg-purple-700"></div>
+    <div class="w-6 h-6 border border-black bg-purple-700">
+      <img [src]="purple_path" width="24" height="24" alt="purple" />
+    </div>
     }@case ("orange") {
-    <div class="w-6 h-6 border border-black bg-orange-600"></div>
+    <div class="w-6 h-6 border border-black bg-orange-600">
+      <img [src]="orange_path" width="24" height="24" alt="orange" />
+    </div>
     }@case ("navy") {
-    <div class="w-6 h-6 border border-black bg-blue-950"></div>
+    <div class="w-6 h-6 border border-black bg-blue-950">
+      <img [src]="navy_path" width="24" height="24" alt="navy" />
+    </div>
     }} }
   </div>
   }
