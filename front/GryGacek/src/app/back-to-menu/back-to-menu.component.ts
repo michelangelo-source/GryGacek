@@ -8,8 +8,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrl: './back-to-menu.component.scss',
 })
 export class BackToMenuComponent {
-  @Output() back = new EventEmitter<string>();
   back_to_menu() {
-    this.back.emit('none');
+    window.location.reload();
   }
 }

@@ -32,6 +32,7 @@ export class TetrisComponent {
   purple_path: string = '/assets/images/tetris/purple.png';
   orange_path: string = '/assets/images/tetris/orange.png';
   navy_path: string = '/assets/images/tetris/navy.png';
+  black_path: string = '/assets/images/tetris/black.png';
 
   private rotations: coords_changes[][][] = [
     //blue

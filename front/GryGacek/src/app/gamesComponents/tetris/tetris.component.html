@@ -4,7 +4,9 @@
 
   <div class="flex flex-row">
     @for(cell of row;track $index){ @switch (cell.color) { @case ("black") {
-    <div class="w-6 h-6 border border-black bg-black"></div>
+    <div class="w-6 h-6 border border-black bg-black">
+      <img [src]="black_path" width="24" height="24" alt="black" />
+    </div>
     }@case ("white") {
     <div class="w-6 h-6 border border-black"></div>
     }@case ("blue") {
