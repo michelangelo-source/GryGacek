@@ -1,1 +1,29 @@
-<p>kulki works!</p>
+<div class="mt-10 w-svw flex items-center justify-center flex-col">
+  @for (row of board;track row;let rowId=$index ){
+  <div class="flex flex-row">
+    @for(square of row;track square; let columnId=$index){ @switch
+    (square.color) { @case ("black") {
+    <div
+      class="w-20 h-20 border border-white bg-black"
+      (click)="chose_ball(rowId, columnId)"
+    ></div>
+    }@case ("white") {
+    <div class="w-20 h-20 border border-white"></div>
+    }@case ("blue") {
+    <div class="w-20 h-20 border border-white bg-blue-700"></div>
+    }@case ("green") {
+    <div class="w-20 h-20 border border-white bg-green-700"></div>
+    }@case ("red") {
+    <div class="w-20 h-20 border border-white bg-red-700"></div>
+    }@case ("yellow") {
+    <div class="w-20 h-20 border border-white bg-yellow-500"></div>
+    }@case ("purple") {
+    <div class="w-20 h-20 border border-white bg-purple-700"></div>
+    }@case ("orange") {
+    <div class="w-20 h-20 border border-white bg-orange-600"></div>
+    }@case ("navy") {
+    <div class="w-20 h-20 border border-white bg-blue-950"></div>
+    }} }
+  </div>
+  }
+</div>
