@@ -1,29 +1,129 @@
-<div class="mt-10 w-svw flex items-center justify-center flex-col">
-  @for (row of board;track row;let rowId=$index ){
-  <div class="flex flex-row">
-    @for(square of row;track square; let columnId=$index){ @switch
-    (square.color) { @case ("black") {
-    <div
-      class="w-20 h-20 border border-white bg-black"
-      (click)="chose_ball(rowId, columnId)"
-    ></div>
-    }@case ("white") {
-    <div class="w-20 h-20 border border-white"></div>
-    }@case ("blue") {
-    <div class="w-20 h-20 border border-white bg-blue-700"></div>
-    }@case ("green") {
-    <div class="w-20 h-20 border border-white bg-green-700"></div>
-    }@case ("red") {
-    <div class="w-20 h-20 border border-white bg-red-700"></div>
-    }@case ("yellow") {
-    <div class="w-20 h-20 border border-white bg-yellow-500"></div>
-    }@case ("purple") {
-    <div class="w-20 h-20 border border-white bg-purple-700"></div>
-    }@case ("orange") {
-    <div class="w-20 h-20 border border-white bg-orange-600"></div>
-    }@case ("navy") {
-    <div class="w-20 h-20 border border-white bg-blue-950"></div>
-    }} }
+<div class="w-max-svw flex items-center justify-center flex-col bg-gray-800">
+  <div
+    class="w-5/12 py-20 rounded-lg flex items-center justify-center flex-col bg-gray-900"
+  >
+    @for (row of board;track row;let rowId=$index ){
+    <div class="flex flex-row">
+      @for(square of row;track square; let columnId=$index){ @switch
+      (square.color) { @case ("black") {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      ></div>
+      }@case ("white") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="white_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="white_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("green") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="green_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="green_path" width="80" height="80" alt="navy" />
+      </div>
+      } } @case ("blue") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="blue_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="blue_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("red") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="red_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="red_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("yellow") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="yellow_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="yellow_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("purple") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="purple_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="purple_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("orange") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="orange_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="orange_path" width="80" height="80" alt="navy" />
+      </div>
+      } }@case ("navy") { @if(square.is_selected){
+      <div
+        class="w-20 h-20 border border-white bg-black flex items-center justify-center"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="navy_path" width="70" height="70" alt="navy" />
+      </div>
+      }@else {
+      <div
+        class="w-20 h-20 border border-white bg-black"
+        (click)="chose_ball(square)"
+      >
+        <img [src]="navy_path" width="80" height="80" alt="navy" />
+      </div>
+      } }} }
+    </div>
+    }
   </div>
-  }
 </div>
