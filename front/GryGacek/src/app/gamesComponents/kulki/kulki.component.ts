@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
-interface squere {
+export type squere = {
   color: string;
   x: number;
   y: number;
   is_selected: boolean;
-}
+};
 
 @Component({
   selector: 'app-kulki',
@@ -23,6 +23,7 @@ export class KulkiComponent {
   purple_path: string = '/assets/images/kulki/purple.png';
   orange_path: string = '/assets/images/kulki/orange.png';
   white_path: string = '/assets/images/kulki/white.png';
+
   selected_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
   selected_squere: squere = { x: 9, y: 9, color: '', is_selected: false };
   board: squere[][] = [];
@@ -37,6 +38,7 @@ export class KulkiComponent {
     'orange',
     'navy',
   ];
+
   ngOnInit() {
     for (let i = 0; i < 9; i++) {
       let row: squere[] = [];
@@ -58,22 +60,16 @@ export class KulkiComponent {
     }
 
     this.add_balls();
-    this.add_balls();
-    this.add_balls();
-    this.add_balls();
-    this.add_balls();
-    this.add_balls();
   }
   chose_ball(selected_squre: squere) {
     if (selected_squre.color != 'black') {
       if (
         selected_squre.x == this.selected_squere.x &&
-        selected_squre.x == this.selected_squere.y
+        selected_squre.y == this.selected_squere.y
       ) {
-        ///////////////////////////////////////////////////////////////do tegho ifa nie wchodzi odklikanie
-
         clearInterval(this.selected_interval);
         selected_squre.is_selected = false;
+        this.selected_squere = { x: 9, y: 9, color: '', is_selected: false };
       } else {
         clearInterval(this.selected_interval);
         if (this.selected_squere.x != 9) {
@@ -88,17 +84,28 @@ export class KulkiComponent {
         }, 500);
       }
     } else {
-      alert('czarne');
+      if (this.selected_squere.x != 9) {
+        clearInterval(this.selected_interval);
+        this.board[this.selected_squere.x][this.selected_squere.y].is_selected =
+          false;
+
+        this.find_path(selected_squre);
+      }
     }
-
-    //html dla wszystkich kolorów
-
-    //ruch
-    //sprawdzanie 5 i wiećej
-    //pkt
+  }
+  find_path(destination: squere) {
+    console.log(this.selected_squere);
+    console.log(destination);
+    this.selected_squere = { x: 9, y: 9, color: '', is_selected: false };
+    this.check();
+  }
+  check() {
+    //krzyz w srodku
+    //4tablice rzedzy kolumny skosy rosnoce malejace
+    this.add_balls();
   }
   add_balls() {
-    if (this.empty.length < 3) {
+    if (this.empty.length <= 3) {
       this.gameover();
     } else {
       for (let i = 0; i < 3; i++) {
