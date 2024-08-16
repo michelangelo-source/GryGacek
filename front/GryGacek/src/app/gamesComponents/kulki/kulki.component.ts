@@ -1,12 +1,11 @@
-import { NONE_TYPE } from '@angular/compiler';
 import { Component } from '@angular/core';
-import path from 'node:path';
 
 export type squere = {
   color: string;
   x: number;
   y: number;
   is_selected: boolean;
+  is_path: boolean;
 };
 export type path_node = {
   cost: number;
@@ -32,9 +31,25 @@ export class KulkiComponent {
   purple_path: string = '/assets/images/kulki/purple.png';
   orange_path: string = '/assets/images/kulki/orange.png';
   white_path: string = '/assets/images/kulki/white.png';
-
+  paths: { [color: string]: string } = {
+    white: this.white_path,
+    green: this.green_path,
+    blue: this.blue_path,
+    red: this.red_path,
+    yellow: this.yellow_path,
+    purple: this.purple_path,
+    orange: this.orange_path,
+    navy: this.navy_path,
+  };
   selected_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
-  selected_squere: squere = { x: 9, y: 9, color: '', is_selected: false };
+  animation_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
+  selected_squere: squere = {
+    x: 9,
+    y: 9,
+    color: '',
+    is_selected: false,
+    is_path: false,
+  };
   board: squere[][] = [];
   empty: squere[] = [];
   colors: string[] = [
@@ -47,6 +62,7 @@ export class KulkiComponent {
     'orange',
     'navy',
   ];
+
   pythagoras(x1: number, y1: number, x2: number, y2: number) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
@@ -59,18 +75,23 @@ export class KulkiComponent {
           x: i,
           y: j,
           is_selected: false,
+          is_path: false,
         });
         this.empty.push({
           color: 'black',
           x: i,
           y: j,
           is_selected: false,
+          is_path: false,
         });
       }
       this.board.push(row);
     }
 
     this.add_balls();
+  }
+  get_color_path(color: string) {
+    return this.paths[color];
   }
   chose_ball(selected_squre: squere) {
     if (selected_squre.color != 'black') {
@@ -80,7 +101,13 @@ export class KulkiComponent {
       ) {
         clearInterval(this.selected_interval);
         selected_squre.is_selected = false;
-        this.selected_squere = { x: 9, y: 9, color: '', is_selected: false };
+        this.selected_squere = {
+          x: 9,
+          y: 9,
+          color: '',
+          is_selected: false,
+          is_path: false,
+        };
       } else {
         clearInterval(this.selected_interval);
         if (this.selected_squere.x != 9) {
@@ -99,14 +126,35 @@ export class KulkiComponent {
         clearInterval(this.selected_interval);
         this.board[this.selected_squere.x][this.selected_squere.y].is_selected =
           false;
-
-        console.log(this.find_path(selected_squre));
+        let path_elem = this.find_path(selected_squre);
+        console.log(path_elem);
+        if (path_elem.cost != 999) {
+          let path: path_node[] = [];
+          while (path_elem.prev) {
+            this.board[path_elem.x][path_elem.y].is_path = true;
+            path.unshift(path_elem);
+            path_elem;
+            path_elem = path_elem.prev;
+          }
+          let i = 0;
+          // this.ball_step(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+          // this.animation_interval = setInterval(() => {
+          //   this.ball_step(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+          //   i++;
+          //   if (i == path.length - 2) {
+          //     clearInterval(this.animation_interval);
+          //   }
+          // }, 200);
+        }
       }
     }
   }
-
+  ball_step(x1: number, y1: number, x2: number, y2: number) {
+    this.board[x2][y2].color = this.board[x1][y1].color;
+    this.board[x1][y1].color = 'black';
+    this.board[x1][y1].is_path = false;
+  }
   find_path(destination: squere) {
-    ///not working
     console.log(this.selected_squere);
     console.log(destination);
 
@@ -116,8 +164,8 @@ export class KulkiComponent {
       y: this.selected_squere.y,
       cost: 999,
     };
+
     let visited: path_node[] = [start];
-    console.log(visited);
     let i = 0;
 
     while (i < 81) {
@@ -126,6 +174,7 @@ export class KulkiComponent {
         if (!visited[i].visited) {
           elem = visited[i];
           visited[i].visited = true;
+          break;
         }
       }
 
@@ -150,7 +199,13 @@ export class KulkiComponent {
                 elem.y,
                 destination.x,
                 destination.y
-              ) + this.cost_counter(elem),
+              ) +
+              this.pythagoras(
+                elem.x + 1,
+                elem.y,
+                this.selected_squere.x,
+                this.selected_squere.y
+              ),
           };
 
           if (new_node.x == destination.x && new_node.y == destination.y) {
@@ -183,7 +238,13 @@ export class KulkiComponent {
                 elem.y,
                 destination.x,
                 destination.y
-              ) + this.cost_counter(elem),
+              ) +
+              this.pythagoras(
+                elem.x - 1,
+                elem.y,
+                this.selected_squere.x,
+                this.selected_squere.y
+              ),
           };
 
           if (new_node.x == destination.x && new_node.y == destination.y) {
@@ -216,7 +277,13 @@ export class KulkiComponent {
                 elem.y + 1,
                 destination.x,
                 destination.y
-              ) + this.cost_counter(elem),
+              ) +
+              this.pythagoras(
+                elem.x,
+                elem.y + 1,
+                this.selected_squere.x,
+                this.selected_squere.y
+              ),
           };
 
           if (new_node.x == destination.x && new_node.y == destination.y) {
@@ -249,7 +316,13 @@ export class KulkiComponent {
                 elem.y - 1,
                 destination.x,
                 destination.y
-              ) + this.cost_counter(elem),
+              ) +
+              this.pythagoras(
+                elem.x,
+                elem.y - 1,
+                this.selected_squere.x,
+                this.selected_squere.y
+              ),
           };
 
           if (new_node.x == destination.x && new_node.y == destination.y) {
@@ -266,28 +339,26 @@ export class KulkiComponent {
 
       i++;
     }
-    this.selected_squere = { x: 9, y: 9, color: '', is_selected: false };
+    this.selected_squere = {
+      x: 9,
+      y: 9,
+      color: '',
+      is_selected: false,
+      is_path: false,
+    };
 
     if (i == 81) {
-      return 'dupa';
+      return start;
     } else {
       this.check();
       return visited[0];
     }
   }
-  cost_counter(elem: path_node) {
-    let cost = 0;
-    while (elem.cost != 999) {
-      cost += elem.cost;
-      if (elem.prev) elem = elem.prev;
-    }
-    return cost;
-  }
   check() {
     console.log('check');
     //krzyz w srodku
     //4tablice rzedzy kolumny skosy rosnoce malejace
-    //  this.add_balls();
+    this.add_balls();
   }
   add_balls() {
     if (this.empty.length <= 3) {
