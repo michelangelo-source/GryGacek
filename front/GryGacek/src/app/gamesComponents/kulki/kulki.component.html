@@ -1,4 +1,7 @@
 <div class="w-max-svw flex items-center justify-center flex-col bg-gray-800">
+  <div class="w-5/12 bg-black rounded-lg text-stone-50">
+    Twoje pkt: {{ points }}
+  </div>
   <div
     class="w-5/12 py-20 rounded-lg flex items-center justify-center flex-col bg-gray-900"
   >
@@ -17,8 +20,8 @@
         @if (square.color!="black") {
         <img
           [src]="get_color_path(square.color)"
-          [width]="square.is_selected ? '70' : '80'"
-          [height]="square.is_selected ? '70' : '80'"
+          [width]="square.is_selected ? '50' : '70'"
+          [height]="square.is_selected ? '50' : '70'"
           alt="{{ square.color }}"
         />
         }
