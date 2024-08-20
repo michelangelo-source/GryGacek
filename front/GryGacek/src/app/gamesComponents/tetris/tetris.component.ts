@@ -1,15 +1,13 @@
 import { Component, HostListener } from '@angular/core';
-
+import { rotations } from './tetris.rotations';
+import { starting_positions } from './tetris.startingPositions';
 export type cellTetris = {
   color: string;
   occupied: boolean;
   can_fall: boolean;
   can_rotate_now: boolean;
 };
-export type coords_changes = {
-  x: number;
-  y: number;
-};
+
 @Component({
   selector: 'app-tetris',
   standalone: true,
@@ -34,6 +32,15 @@ export class TetrisComponent {
   orange_path: string = '/assets/images/tetris/orange.png';
   navy_path: string = '/assets/images/tetris/navy.png';
   black_path: string = '/assets/images/tetris/black.png';
+  color: string[] = [
+    'blue',
+    'green',
+    'red',
+    'yellow',
+    'purple',
+    'orange',
+    'navy',
+  ];
   paths: { [color: string]: string } = {
     green: this.green_path,
     blue: this.blue_path,
@@ -44,197 +51,7 @@ export class TetrisComponent {
     navy: this.navy_path,
     black: this.black_path,
   };
-  private rotations: coords_changes[][][] = [
-    //blue
-    [
-      [
-        { x: 2, y: 2 },
-        { x: 1, y: 1 },
-        { x: 0, y: 0 },
-        { x: -1, y: -1 },
-      ],
-      [
-        { x: 1, y: 1 },
-        { x: 0, y: 0 },
-        { x: -1, y: -1 },
-        { x: -2, y: -2 },
-      ],
-      [
-        { x: 2, y: 2 },
-        { x: 1, y: 1 },
-        { x: 0, y: 0 },
-        { x: -1, y: -1 },
-      ],
-      [
-        { x: 1, y: 1 },
-        { x: 0, y: 0 },
-        { x: -1, y: -1 },
-        { x: -2, y: -2 },
-      ],
-    ],
-    //green
-    [
-      [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 1, y: 2 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: 0 },
-        { x: -1, y: -2 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 1, y: 2 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: 0 },
-        { x: -1, y: -2 },
-      ],
-    ],
-    //red
-    [
-      [
-        { x: 1, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: -2 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: -1, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: 2 },
-      ],
-      [
-        { x: 1, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: -2 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: -1, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: 2 },
-      ],
-    ],
-    ////   'yellow',
-    [
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-    ],
-    //purple
-    [
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: -1 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: 1 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 1, y: 1 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 1, y: -1 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-    ],
-    //orange
-    [
-      [
-        { x: 2, y: 1 },
-        { x: 2, y: 1 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 1, y: -2 },
-        { x: 1, y: -2 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -2, y: -1 },
-        { x: -2, y: -1 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: +2 },
-        { x: -1, y: +2 },
-      ],
-    ],
-    //navy
-    [
-      [
-        { x: 1, y: 2 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: 2 },
-      ],
-      [
-        { x: 2, y: -1 },
-        { x: 2, y: -1 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-      ],
-      [
-        { x: -1, y: -2 },
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -1, y: -2 },
-      ],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: -2, y: 1 },
-        { x: -2, y: 1 },
-      ],
-    ],
-  ];
+
   @HostListener('window:keyup.arrowleft', ['$event'])
   arrow_left() {
     this.move(false);
@@ -304,6 +121,7 @@ export class TetrisComponent {
     alert('dupa');
     window.location.reload();
   }
+
   nextblock() {
     if (this.board[0][5].color != 'white') {
       this.gameover();
@@ -311,191 +129,16 @@ export class TetrisComponent {
     }
     this.current_block_id = Math.floor(Math.random() * 7);
     this.current_block_position = 0;
-    switch (this.current_block_id) {
-      case 0:
-        this.board[0][7] = {
-          color: 'blue',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][4] = {
-          color: 'blue',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][5] = {
-          color: 'blue',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'blue',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
 
-        break;
-      case 1:
-        this.board[0][5] = {
-          color: 'green',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'green',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][5] = {
-          color: 'green',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][4] = {
-          color: 'green',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-
-        break;
-      case 2:
-        this.board[0][5] = {
-          color: 'red',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][4] = {
-          color: 'red',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][5] = {
-          color: 'red',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][6] = {
-          color: 'red',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        break;
-      case 3:
-        this.board[0][5] = {
-          color: 'yellow',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'yellow',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][5] = {
-          color: 'yellow',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][6] = {
-          color: 'yellow',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        break;
-      case 4:
-        this.board[0][5] = {
-          color: 'purple',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][4] = {
-          color: 'purple',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'purple',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][5] = {
-          color: 'purple',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        break;
-      case 5:
-        this.board[0][5] = {
-          color: 'orange',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][4] = {
-          color: 'orange',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'orange',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][6] = {
-          color: 'orange',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        break;
-      case 6:
-        this.board[0][5] = {
-          color: 'navy',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][6] = {
-          color: 'navy',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[0][4] = {
-          color: 'navy',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        this.board[1][4] = {
-          color: 'navy',
-          occupied: true,
-          can_fall: true,
-          can_rotate_now: true,
-        };
-        break;
+    for (let i = 0; i < 4; i++) {
+      this.board[starting_positions[this.current_block_id][i].x][
+        starting_positions[this.current_block_id][i].y
+      ] = {
+        color: this.color[this.current_block_id],
+        occupied: true,
+        can_fall: true,
+        can_rotate_now: true,
+      };
     }
     this.level = Math.floor(this.line_removed / 10) + 1;
     this.fall_time = 2000 - 50 * this.level;
@@ -584,23 +227,23 @@ export class TetrisComponent {
           if (
             this.board[
               i +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].x
             ][
               j +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].y
             ].color != 'white' &&
             this.board[
               i +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].x
             ][
               j +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].y
             ].can_fall == false
@@ -619,38 +262,38 @@ export class TetrisComponent {
           tmp =
             this.board[
               i +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].x
             ][
               j +
-                this.rotations[this.current_block_id][
+                rotations[this.current_block_id][
                   this.current_block_position % 4
                 ][already_moved_block].y
             ];
 
           this.board[
             i +
-              this.rotations[this.current_block_id][
-                this.current_block_position % 4
-              ][already_moved_block].x
+              rotations[this.current_block_id][this.current_block_position % 4][
+                already_moved_block
+              ].x
           ][
             j +
-              this.rotations[this.current_block_id][
-                this.current_block_position % 4
-              ][already_moved_block].y
+              rotations[this.current_block_id][this.current_block_position % 4][
+                already_moved_block
+              ].y
           ] = this.board[i][j];
 
           this.board[
             i +
-              this.rotations[this.current_block_id][
-                this.current_block_position % 4
-              ][already_moved_block].x
+              rotations[this.current_block_id][this.current_block_position % 4][
+                already_moved_block
+              ].x
           ][
             j +
-              this.rotations[this.current_block_id][
-                this.current_block_position % 4
-              ][already_moved_block].y
+              rotations[this.current_block_id][this.current_block_position % 4][
+                already_moved_block
+              ].y
           ].can_rotate_now = false;
 
           this.board[i][j] = tmp;
@@ -721,13 +364,3 @@ export class TetrisComponent {
     }, 800);
   }
 }
-
-// let color: string[] = [
-//   'blue',
-//   'green',
-//   'red',
-//   'yellow',
-//   'purple',
-//   'orange',
-//   'navy',
-// ];

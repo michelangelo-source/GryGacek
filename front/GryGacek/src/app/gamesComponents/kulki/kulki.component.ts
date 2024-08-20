@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { coords } from '../../../models/cords.type';
 
 export type squere = {
   color: string;
@@ -53,7 +54,7 @@ export class KulkiComponent {
   };
   points = 0;
   board: squere[][] = [];
-  empty: squere[] = [];
+  empty: coords[] = [];
   colors: string[] = [
     'white',
     'blue',
@@ -80,11 +81,8 @@ export class KulkiComponent {
           is_path: false,
         });
         this.empty.push({
-          color: 'black',
           x: i,
           y: j,
-          is_selected: false,
-          is_path: false,
         });
       }
       this.board.push(row);
@@ -159,11 +157,8 @@ export class KulkiComponent {
                     this.empty[j].y == path[path.length - 1].y
                   ) {
                     this.empty[j] = {
-                      color: 'black',
                       x: path[0].x,
                       y: path[0].y,
-                      is_selected: false,
-                      is_path: false,
                     };
                     break;
                   }
@@ -503,11 +498,8 @@ export class KulkiComponent {
           is_path: false,
         };
         this.empty.push({
-          color: 'black',
           x: element.x,
           y: element.y,
-          is_selected: false,
-          is_path: false,
         });
       });
     }
