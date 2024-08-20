@@ -25,6 +25,7 @@ export class TetrisComponent {
   line_removed: number = 0;
   level: number = 1;
   fall_time: number = 1000;
+
   blue_path: string = '/assets/images/tetris/blue.png';
   green_path: string = '/assets/images/tetris/green.png';
   red_path: string = '/assets/images/tetris/red.png';
@@ -33,7 +34,16 @@ export class TetrisComponent {
   orange_path: string = '/assets/images/tetris/orange.png';
   navy_path: string = '/assets/images/tetris/navy.png';
   black_path: string = '/assets/images/tetris/black.png';
-
+  paths: { [color: string]: string } = {
+    green: this.green_path,
+    blue: this.blue_path,
+    red: this.red_path,
+    yellow: this.yellow_path,
+    purple: this.purple_path,
+    orange: this.orange_path,
+    navy: this.navy_path,
+    black: this.black_path,
+  };
   private rotations: coords_changes[][][] = [
     //blue
     [
@@ -286,6 +296,9 @@ export class TetrisComponent {
     }
     this.board.push(row);
     this.nextblock();
+  }
+  get_color_path(color: string) {
+    return this.paths[color];
   }
   gameover() {
     alert('dupa');
