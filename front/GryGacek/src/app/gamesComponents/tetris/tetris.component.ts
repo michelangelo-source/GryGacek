@@ -226,23 +226,23 @@ export class TetrisComponent {
     ],
   ];
   @HostListener('window:keyup.arrowleft', ['$event'])
-  arrowLeft(event: KeyboardEvent) {
+  arrow_left() {
     this.move(false);
   }
   @HostListener('window:keyup.arrowright', ['$event'])
-  arrowRight(event: KeyboardEvent) {
+  arrow_right() {
     this.move(true);
   }
   @HostListener('window:keyup.arrowdown', ['$event'])
-  arrowdown(event: KeyboardEvent) {
+  arrow_down() {
     this.fall();
   }
   @HostListener('window:keyup.arrowup', ['$event'])
-  arrowup(event: KeyboardEvent) {
+  arrow_up() {
     this.rotate();
   }
   @HostListener('window:keyup.space', ['$event'])
-  space(event: KeyboardEvent) {
+  space() {
     let falling = this.fall();
     while (falling) {
       falling = this.fall();

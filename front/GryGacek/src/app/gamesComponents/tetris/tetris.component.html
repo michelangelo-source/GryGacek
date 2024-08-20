@@ -40,4 +40,47 @@
     }} }
   </div>
   }
+  <div class="flex flex-row">
+    <div class="mx-5">
+      <div class="lg:hidden w-24 h-10 rounded-lg"></div>
+      <div
+        class="lg:hidden w-24 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+        (click)="space()"
+      >
+        －
+      </div>
+    </div>
+    <div class="mx-5">
+      <div class="flex flex-row">
+        <div class="lg:hidden w-10 h-10 rounded-lg"></div>
+        <div
+          class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+          (click)="arrow_up()"
+        >
+          ↑
+        </div>
+        <div class="lg:hidden w-10 h-10 rounded-lg"></div>
+      </div>
+      <div class="flex flex-row">
+        <div
+          class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+          (click)="arrow_left()"
+        >
+          ←
+        </div>
+        <div
+          class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+          (click)="arrow_down()"
+        >
+          ↓
+        </div>
+        <div
+          class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+          (click)="arrow_right()"
+        >
+          →
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
