@@ -427,6 +427,67 @@ export class KulkiComponent {
             to_clear.push(this.board[i][jleft]);
           }
         }
+
+        let jright_down = 4;
+        let jleft_up = 4;
+        step = 0;
+        let index_last_left_up = i;
+        while (step <= 4) {
+          if (
+            i + step <= 8 &&
+            jright_down + 1 <= 8 &&
+            this.board[i + step][jright_down + 1].color ==
+              this.board[i][4].color
+          ) {
+            jright_down++;
+          }
+          if (
+            i - step >= 0 &&
+            jleft_up - 1 >= 0 &&
+            this.board[i - step][jleft_up - 1].color == this.board[i][4].color
+          ) {
+            jleft_up--;
+            index_last_left_up = i - step;
+          }
+          step++;
+        }
+        if (jright_down - jleft_up >= 4) {
+          this.points += jright_down - jleft_up + 1;
+          for (jleft_up; jleft_up <= jright_down; jleft_up++) {
+            to_clear.push(this.board[index_last_left_up][jleft_up]);
+            index_last_left_up++;
+          }
+        }
+
+        let jleft_down = 4;
+        let jright_up = 4;
+        step = 0;
+        let index_last_left_down = i;
+        while (step <= 4) {
+          if (
+            i - step >= 0 &&
+            jright_up + 1 <= 8 &&
+            this.board[i - step][jright_up + 1].color == this.board[i][4].color
+          ) {
+            jright_up++;
+          }
+          if (
+            i + step <= 8 &&
+            jleft_down - 1 >= 0 &&
+            this.board[i + step][jleft_down - 1].color == this.board[i][4].color
+          ) {
+            jleft_down--;
+            index_last_left_down = i + step;
+          }
+          step++;
+        }
+        if (jright_up - jleft_down >= 4) {
+          this.points += jright_up - jleft_down + 1;
+          for (jleft_down; jleft_down <= jright_up; jleft_down++) {
+            to_clear.push(this.board[index_last_left_down][jleft_down]);
+            index_last_left_down--;
+          }
+        }
       }
     }
 
