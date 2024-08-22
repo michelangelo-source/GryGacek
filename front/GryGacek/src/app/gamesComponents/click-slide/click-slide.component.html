@@ -1,1 +1,19 @@
-<p>click-slide works!</p>
+<div class="flex flex-row justify-center items-center">
+  <div class="flex flex-col">slider</div>
+  <div class="flex flex-col">
+    <div class="flex flex-row">
+      @for (item of sizes; track $index) {
+      <div
+        class="border border-black rounded-lg px-2 mx-2 hover:bg-black hover:text-white"
+        (click)="set_size($index + 3)"
+      >
+        {{ item }}
+      </div>
+      }
+    </div>
+    <div>ukladanka</div>
+    <div>timer</div>
+  </div>
+</div>
+
+<!-- pictuer taken from: https://stockcake.com/ -->
