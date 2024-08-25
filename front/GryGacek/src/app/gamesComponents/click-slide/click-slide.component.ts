@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { coords } from '../../../models/cords.type';
 
 @Component({
   selector: 'app-click-slide',
@@ -15,8 +16,27 @@ export class ClickSlideComponent {
   paths = [this.mask_path, this.sunflower_path, this.balck_sheep_path];
   current_path = this.paths[0];
   size = 3;
+  background_pictures_coords: coords[] = [];
+  ngOnInit() {
+    this.set_size(this.size);
+  }
+  get_current_path() {
+    return this.current_path;
+  }
+  get_box_size() {
+    return 720 / this.size;
+  }
   set_size(size: number) {
     this.size = size;
-    console.log(this.size);
+    this.background_pictures_coords = [];
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        this.background_pictures_coords.push({
+          x: (720 / this.size) * j * -1,
+          y: (720 / this.size) * i * -1,
+        });
+      }
+    }
+    console.log(this.background_pictures_coords);
   }
 }

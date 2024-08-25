@@ -1,6 +1,6 @@
-<div class="flex flex-row justify-center items-center">
-  <div class="flex flex-col">slider</div>
-  <div class="flex flex-col">
+<div class="flex flex-row justify-center items-center max-w-full">
+  <div class="flex flex-col w-1/4 justify-center items-center">slider</div>
+  <div class="flex flex-col w-3/4 justify-center items-center">
     <div class="flex flex-row">
       @for (item of sizes; track $index) {
       <div
@@ -11,7 +11,21 @@
       </div>
       }
     </div>
-    <div>ukladanka</div>
+
+    <div class="grid grid-cols-3 gap-1">
+      @for(background of background_pictures_coords;track $index ){
+
+      <div
+        class="bg-red-900 border border-black w-52 h-52 text-white bg-no-repeat"
+        [style.background-image]="'url(' + get_current_path() + ')'"
+        [style.background-position-x]="background.x + 'px'"
+        [style.background-position-y]="background.y + 'px'"
+        [style.background-size]="'720px 720px'"
+      >
+        {{ background.x }} x {{ background.y }}
+      </div>
+      }
+    </div>
     <div>timer</div>
   </div>
 </div>
