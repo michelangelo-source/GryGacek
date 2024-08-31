@@ -1,5 +1,8 @@
 <div class="flex flex-row justify-center items-center max-w-full">
-  <div class="flex flex-col w-1/4 justify-center items-center">slider</div>
+  <div class="flex flex-col w-1/4 h-56 justify-center items-center">
+    <div class="w-full h-1/2 bg-blue-700" (click)="change_picture(-1)"></div>
+    <div class="w-full h-1/2 bg-red-900" (click)="change_picture(1)"></div>
+  </div>
   <div class="flex flex-col w-3/4 justify-center items-center">
     <div class="flex flex-row">
       @for (item of sizes; track $index) {
@@ -12,20 +15,37 @@
       }
     </div>
 
-    <div class="grid grid-cols-3 gap-1">
+    <div [ngClass]="'grid ' + get_number_of_cols(size)">
       @for(background of background_pictures_coords;track $index ){
-
+      @if($index==current_black_position){
       <div
-        class="bg-red-900 border border-black w-52 h-52 text-white bg-no-repeat"
-        [style.background-image]="'url(' + get_current_path() + ')'"
-        [style.background-position-x]="background.x + 'px'"
-        [style.background-position-y]="background.y + 'px'"
-        [style.background-size]="'720px 720px'"
+        class="bg-black border border-black text-white bg-no-repeat"
+        [style.width.px]="get_box_size()"
+        [style.height.px]="get_box_size()"
       >
         {{ background.x }} x {{ background.y }}
       </div>
-      }
+      }@else {
+
+      <div
+        class="border-black text-white bg-no-repeat"
+        [style.width.px]="get_box_size()"
+        [style.height.px]="get_box_size()"
+        [style.background-image]="'url(' + get_current_path() + ')'"
+        [style.background-position-x.px]="background.x"
+        [style.background-position-y.px]="background.y"
+        [style.background-size]="'720px 720px'"
+        (click)="
+          background.can_switch && !is_mixing
+            ? block_switch(background.place_id)
+            : null
+        "
+      >
+        {{ background.x }} x {{ background.y }}
+      </div>
+      }}
     </div>
+
     <div>timer</div>
   </div>
 </div>

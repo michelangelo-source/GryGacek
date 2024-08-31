@@ -1,20 +1,16 @@
 import { Component } from '@angular/core';
 import { coords } from '../../../models/cords.type';
 
-export type squere = {
+export interface squere extends coords {
   color: string;
-  x: number;
-  y: number;
   is_selected: boolean;
   is_path: boolean;
-};
-export type path_node = {
+}
+export interface path_node extends coords {
   cost: number;
   prev?: path_node;
-  x: number;
-  y: number;
   visited: boolean;
-};
+}
 
 @Component({
   selector: 'app-kulki',
