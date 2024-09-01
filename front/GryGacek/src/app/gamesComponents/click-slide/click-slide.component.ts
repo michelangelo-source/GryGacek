@@ -14,34 +14,87 @@ interface click_and_slide_coords extends coords {
   styleUrl: './click-slide.component.scss',
 })
 export class ClickSlideComponent {
-  picture = 0;
+  is_last_cut_to_small = false;
+  start_time = Date.now();
+  solving_time = Date.now();
+  hours = 0;
+  minutes = 0;
+  sec = 0;
+  milisec = 0;
+  is_solving = false;
+  picture = 1;
   is_mixing = false;
   sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
+  picture_size = 720;
+
   mask_path = '/assets/images/click_and_slide/mask.jpg';
   sunflower_path = '/assets/images/click_and_slide/sunflower.jpg';
   balck_sheep_path = '/assets/images/click_and_slide/black_sheep.jpg';
-  paths = [this.mask_path, this.sunflower_path, this.balck_sheep_path];
+
+  mask_path_mini = '/assets/images/click_and_slide/mask_mini.jpg';
+  sunflower_path_mini = '/assets/images/click_and_slide/sunflower_mini.jpg';
+  balck_sheep_path_mini = '/assets/images/click_and_slide/black_sheep_mini.jpg';
+
+  paths = [this.sunflower_path, this.mask_path, this.balck_sheep_path];
+  paths_mini = [
+    this.sunflower_path_mini,
+    this.mask_path_mini,
+    this.balck_sheep_path_mini,
+  ];
   current_path = this.paths[this.picture];
   size = 3;
   switching_blocks = [
     this.size * this.size - 2,
     this.size * (this.size - 1) - 1,
   ];
+  box_size = 120;
   current_black_position = this.size * this.size - 1;
   background_pictures_coords: click_and_slide_coords[] = [];
-  mixing_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
+  time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
+
   //mieszanie to tablica id ktore mozna ruszyc i wywlas block switch z losowym elementem duzo razy
   ngOnInit() {
+    if (window.innerWidth < 768) {
+      this.picture_size = 360;
+      this.current_path = this.paths_mini[this.picture];
+    } else {
+      this.picture_size = 720;
+      this.current_path = this.paths[this.picture];
+    }
+    if (this.picture_size == 360) {
+      this.is_last_cut_to_small = true;
+    } else {
+      this.is_last_cut_to_small = false;
+    }
+    this.box_size = this.picture_size / this.size;
     this.set_size(this.size);
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 768) {
+        this.picture_size = 360;
+        this.current_path = this.paths_mini[this.picture];
+        if (!this.is_last_cut_to_small) {
+          this.set_size(this.size);
+          this.is_last_cut_to_small = true;
+        }
+      } else {
+        this.picture_size = 720;
+        this.current_path = this.paths[this.picture];
+        if (this.is_last_cut_to_small) {
+          this.set_size(this.size);
+          this.is_last_cut_to_small = false;
+        }
+      }
+      this.box_size = this.picture_size / this.size;
+    });
   }
   get_current_path() {
     return this.current_path;
   }
-  get_box_size() {
-    return 720 / this.size;
-  }
+
   set_size(size: number) {
     this.size = size;
+    this.box_size = this.picture_size / this.size;
+    this.is_solving = false;
     this.current_black_position = this.size * this.size - 1;
     this.background_pictures_coords = [];
     for (let i = 0; i < this.size; i++) {
@@ -50,8 +103,8 @@ export class ClickSlideComponent {
           id: i * this.size + j,
           place_id: i * this.size + j,
           can_switch: false,
-          x: (720 / this.size) * j * -1,
-          y: (720 / this.size) * i * -1,
+          x: (this.picture_size / this.size) * j * -1,
+          y: (this.picture_size / this.size) * i * -1,
         });
       }
     }
@@ -63,8 +116,20 @@ export class ClickSlideComponent {
       this.background_pictures_coords[this.switching_blocks[i]].can_switch =
         true;
     }
-
+    this.start_timer();
     this.mixing();
+    console.log(this.isSolvable(this.background_pictures_coords, this.size));
+  }
+  start_timer() {
+    this.start_time = Date.now();
+    this.is_solving = true;
+    this.time_interval = setInterval(() => {
+      this.solving_time = Date.now() - this.start_time;
+      this.milisec = this.solving_time % 1000;
+      this.sec = Math.floor(this.solving_time / 1000);
+      this.minutes = Math.floor(this.sec / 60);
+      this.hours = Math.floor(this.minutes / 60);
+    }, 1);
   }
   get_number_of_cols(size: number) {
     const number_of_cols: { [number: number]: string } = {
@@ -81,7 +146,13 @@ export class ClickSlideComponent {
       this.picture = 2;
     }
     this.picture = this.picture % this.paths.length;
-    this.current_path = this.paths[this.picture];
+    if (window.innerWidth < 768) {
+      this.picture_size = 360;
+      this.current_path = this.paths_mini[this.picture];
+    } else {
+      this.picture_size = 720;
+      this.current_path = this.paths[this.picture];
+    }
     this.set_size(this.size);
   }
   block_switch(block_position: number) {
@@ -123,8 +194,7 @@ export class ClickSlideComponent {
       this.background_pictures_coords[this.switching_blocks[i]].can_switch =
         true;
     }
-    console.log(this.current_black_position);
-    console.log(this.switching_blocks);
+
     if (!this.is_mixing) {
       setTimeout(() => {
         this.check_win();
@@ -139,24 +209,47 @@ export class ClickSlideComponent {
       }
     });
     if (win) {
-      alert('koniec');
+      this.is_solving = false;
+      clearInterval(this.time_interval);
+      alert(this.solving_time);
     }
   }
   mixing() {
-    let i = 0;
     this.is_mixing = true;
+    for (let i = 0; i < 400; i++) {
+      const index = Math.floor(Math.random() * this.switching_blocks.length);
+      const selected_move = this.switching_blocks[index];
+      this.block_switch(this.background_pictures_coords[selected_move].id);
+    }
+    this.is_mixing = false;
+  }
 
-    this.mixing_interval = setInterval(() => {
-      let index = Math.floor(Math.random() * this.switching_blocks.length);
-      this.block_switch(
-        this.background_pictures_coords[this.switching_blocks[index]].id
-      );
+  isSolvable(coords: click_and_slide_coords[], size: number): boolean {
+    // Flatten the 2D array of IDs to a 1D array of IDs
+    const flatIds = coords.map((coord) => coord.id);
 
-      if (i > 80) {
-        clearInterval(this.mixing_interval);
-        this.is_mixing = false;
+    // Count the number of inversions
+    let inversions = 0;
+    for (let i = 0; i < flatIds.length - 1; i++) {
+      for (let j = i + 1; j < flatIds.length; j++) {
+        if (flatIds[i] > flatIds[j] && flatIds[j] !== flatIds.length - 1) {
+          inversions++;
+        }
       }
-      i++;
-    }, 100);
+    }
+
+    // For odd-sized grids, just check the number of inversions
+    // For even-sized grids, also need to check the row of the empty space
+    if (size % 2 === 1) {
+      // Odd-sized grids: inversion count must be even
+      return inversions % 2 === 0;
+    } else {
+      // Even-sized grids: row of empty space affects solvability
+      const emptyRow = Math.floor(flatIds.indexOf(flatIds.length - 1) / size);
+      return (
+        (inversions % 2 === 0 && emptyRow % 2 === 1) ||
+        (inversions % 2 === 1 && emptyRow % 2 === 0)
+      );
+    }
   }
 }

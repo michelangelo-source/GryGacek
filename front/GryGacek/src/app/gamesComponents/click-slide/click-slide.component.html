@@ -1,9 +1,7 @@
-<div class="flex flex-row justify-center items-center max-w-full">
-  <div class="flex flex-col w-1/4 h-56 justify-center items-center">
-    <div class="w-full h-1/2 bg-blue-700" (click)="change_picture(-1)"></div>
-    <div class="w-full h-1/2 bg-red-900" (click)="change_picture(1)"></div>
-  </div>
-  <div class="flex flex-col w-3/4 justify-center items-center">
+<div
+  class="flex flex-col xl:flex-row-reverse justify-center items-center max-w-full"
+>
+  <div class="flex flex-col w-3/4 min-w-[720px] justify-center items-center">
     <div class="flex flex-row">
       @for (item of sizes; track $index) {
       <div
@@ -19,34 +17,43 @@
       @for(background of background_pictures_coords;track $index ){
       @if($index==current_black_position){
       <div
-        class="bg-black border border-black text-white bg-no-repeat"
-        [style.width.px]="get_box_size()"
-        [style.height.px]="get_box_size()"
-      >
-        {{ background.x }} x {{ background.y }}
-      </div>
+        class="bg-black"
+        [style.width.px]="box_size"
+        [style.height.px]="box_size"
+      ></div>
       }@else {
 
       <div
-        class="border-black text-white bg-no-repeat"
-        [style.width.px]="get_box_size()"
-        [style.height.px]="get_box_size()"
+        class="border-black bg-no-repeat"
+        [style.width.px]="box_size"
+        [style.height.px]="box_size"
         [style.background-image]="'url(' + get_current_path() + ')'"
         [style.background-position-x.px]="background.x"
         [style.background-position-y.px]="background.y"
-        [style.background-size]="'720px 720px'"
+        [style.background-size]="
+          picture_size == 720 ? '720px 720px' : '360px 360px'
+        "
         (click)="
           background.can_switch && !is_mixing
             ? block_switch(background.place_id)
             : null
         "
-      >
-        {{ background.x }} x {{ background.y }}
-      </div>
+      ></div>
       }}
     </div>
 
-    <div>timer</div>
+    <div [style.display]="is_solving ? 'flex' : 'none'">
+      {{ this.hours }}:{{ this.minutes }}:{{ this.sec }}.{{ this.milisec }}
+    </div>
+  </div>
+  <div
+    class="flex flex-row xl:flex-col w-full xl:w-1/4 justify-center items-center"
+  >
+    <div class="w-20 h-20 bg-blue-700" (click)="change_picture(-1)"></div>
+    @for(picture of paths;track $index) {
+    <div class="w-20 h-20"><img [src]="picture" alt="" /></div>
+    }
+    <div class="w-20 h-20 bg-red-900" (click)="change_picture(1)"></div>
   </div>
 </div>
 
