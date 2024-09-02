@@ -19,11 +19,10 @@ export class ClickSlideComponent {
   solving_time = Date.now();
   hours = 0;
   minutes = 0;
-  sec = 0;
+  seconds = 0;
   milisec = 0;
   is_solving = false;
   picture = 1;
-  is_mixing = false;
   sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
   picture_size = 720;
 
@@ -52,7 +51,6 @@ export class ClickSlideComponent {
   background_pictures_coords: click_and_slide_coords[] = [];
   time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
 
-  //mieszanie to tablica id ktore mozna ruszyc i wywlas block switch z losowym elementem duzo razy
   ngOnInit() {
     if (window.innerWidth < 768) {
       this.picture_size = 360;
@@ -116,19 +114,19 @@ export class ClickSlideComponent {
       this.background_pictures_coords[this.switching_blocks[i]].can_switch =
         true;
     }
+    this.shuffling();
     this.start_timer();
-    this.mixing();
-    console.log(this.isSolvable(this.background_pictures_coords, this.size));
+    this.is_solving = true;
   }
   start_timer() {
     this.start_time = Date.now();
-    this.is_solving = true;
+
     this.time_interval = setInterval(() => {
       this.solving_time = Date.now() - this.start_time;
       this.milisec = this.solving_time % 1000;
-      this.sec = Math.floor(this.solving_time / 1000);
-      this.minutes = Math.floor(this.sec / 60);
-      this.hours = Math.floor(this.minutes / 60);
+      this.seconds = Math.floor(this.solving_time / 1000) % 60;
+      this.minutes = Math.floor(this.solving_time / 60000) % 60;
+      this.hours = Math.floor(this.solving_time / 3600000);
     }, 1);
   }
   get_number_of_cols(size: number) {
@@ -195,10 +193,10 @@ export class ClickSlideComponent {
         true;
     }
 
-    if (!this.is_mixing) {
+    if (this.is_solving) {
       setTimeout(() => {
         this.check_win();
-      }, 1);
+      }, 10);
     }
   }
   check_win() {
@@ -209,43 +207,43 @@ export class ClickSlideComponent {
       }
     });
     if (win) {
-      this.is_solving = false;
       clearInterval(this.time_interval);
-      alert(this.solving_time);
+      this.is_solving = false;
+      setTimeout(() => {
+        alert(document.getElementById('timer')?.innerText);
+      }, 20);
     }
   }
-  mixing() {
-    this.is_mixing = true;
-    for (let i = 0; i < 400; i++) {
-      const index = Math.floor(Math.random() * this.switching_blocks.length);
-      const selected_move = this.switching_blocks[index];
-      this.block_switch(this.background_pictures_coords[selected_move].id);
+  shuffling() {
+    for (let i = 0; i < 300; i++) {
+      let block_to_switch_index = Math.floor(
+        Math.random() * this.switching_blocks.length
+      );
+      this.block_switch(this.switching_blocks[block_to_switch_index]);
     }
-    this.is_mixing = false;
+    if (!this.isSolvable(this.background_pictures_coords)) {
+      this.shuffling();
+    }
   }
-
-  isSolvable(coords: click_and_slide_coords[], size: number): boolean {
-    // Flatten the 2D array of IDs to a 1D array of IDs
-    const flatIds = coords.map((coord) => coord.id);
-
-    // Count the number of inversions
+  solved() {
+    this.background_pictures_coords.forEach((element) => {
+      element.id = element.place_id;
+    });
+    this.check_win();
+  }
+  isSolvable(coords: click_and_slide_coords[]): boolean {
     let inversions = 0;
-    for (let i = 0; i < flatIds.length - 1; i++) {
-      for (let j = i + 1; j < flatIds.length; j++) {
-        if (flatIds[i] > flatIds[j] && flatIds[j] !== flatIds.length - 1) {
+    for (let i = 0; i < coords.length - 1; i++) {
+      for (let j = i + 1; j < coords.length; j++) {
+        if (coords[i].id > coords[j].id && coords[j].id !== coords.length - 1) {
           inversions++;
         }
       }
     }
-
-    // For odd-sized grids, just check the number of inversions
-    // For even-sized grids, also need to check the row of the empty space
-    if (size % 2 === 1) {
-      // Odd-sized grids: inversion count must be even
+    if (this.size % 2 === 1) {
       return inversions % 2 === 0;
     } else {
-      // Even-sized grids: row of empty space affects solvability
-      const emptyRow = Math.floor(flatIds.indexOf(flatIds.length - 1) / size);
+      let emptyRow = Math.floor(this.current_black_position / this.size);
       return (
         (inversions % 2 === 0 && emptyRow % 2 === 1) ||
         (inversions % 2 === 1 && emptyRow % 2 === 0)

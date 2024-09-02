@@ -1,23 +1,26 @@
 <div
   class="flex flex-col xl:flex-row-reverse justify-center items-center max-w-full"
 >
-  <div class="flex flex-col w-3/4 min-w-[720px] justify-center items-center">
-    <div class="flex flex-row">
+  <div class="flex flex-col xl:w-3/4 min-w-[760px] justify-center items-center">
+    <div class="flex flex-row bg-rose-900 rounded-lg my-2 py-2">
       @for (item of sizes; track $index) {
       <div
-        class="border border-black rounded-lg px-2 mx-2 hover:bg-black hover:text-white"
+        class="rounded-lg px-2 mx-2 bg-rose-950 hover:bg-red-800 text-white"
         (click)="set_size($index + 3)"
       >
         {{ item }}
       </div>
       }
     </div>
-
-    <div [ngClass]="'grid ' + get_number_of_cols(size)">
+    <div
+      [ngClass]="
+        'grid ' + get_number_of_cols(size) + ' bg-rose-900 p-5 rounded-lg'
+      "
+    >
       @for(background of background_pictures_coords;track $index ){
       @if($index==current_black_position){
       <div
-        class="bg-black"
+        class="bg-rose-900"
         [style.width.px]="box_size"
         [style.height.px]="box_size"
       ></div>
@@ -34,7 +37,7 @@
           picture_size == 720 ? '720px 720px' : '360px 360px'
         "
         (click)="
-          background.can_switch && !is_mixing
+          background.can_switch && is_solving
             ? block_switch(background.place_id)
             : null
         "
@@ -42,10 +45,19 @@
       }}
     </div>
 
-    <div [style.display]="is_solving ? 'flex' : 'none'">
-      {{ this.hours }}:{{ this.minutes }}:{{ this.sec }}.{{ this.milisec }}
+    <div id="timer" class="bg-rose-900 text-white text-xl rounded-lg mt-2 px-4">
+      {{ hours < 10 ? "0" + hours : hours }}:{{
+        minutes < 10 ? "0" + minutes : minutes
+      }}:{{ seconds < 10 ? "0" + seconds : seconds }}.{{
+        milisec < 100 && milisec >= 10
+          ? "0" + milisec
+          : milisec < 10
+          ? "00" + milisec
+          : milisec
+      }}
     </div>
   </div>
+
   <div
     class="flex flex-row xl:flex-col w-full xl:w-1/4 justify-center items-center"
   >
@@ -56,5 +68,4 @@
     <div class="w-20 h-20 bg-red-900" (click)="change_picture(1)"></div>
   </div>
 </div>
-
 <!-- pictuer taken from: https://stockcake.com/ -->
