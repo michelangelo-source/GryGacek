@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { coords } from '../../../models/cords.type';
 import { NgClass } from '@angular/common';
+
 interface click_and_slide_coords extends coords {
   id: number;
   place_id: number;
@@ -22,10 +23,11 @@ export class ClickSlideComponent {
   seconds = 0;
   milisec = 0;
   is_solving = false;
+  is_picture_changing = false;
   picture = 1;
   sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
   picture_size = 720;
-
+  arrow_path = '/assets/images/arrow.png';
   mask_path = '/assets/images/click_and_slide/mask.jpg';
   sunflower_path = '/assets/images/click_and_slide/sunflower.jpg';
   balck_sheep_path = '/assets/images/click_and_slide/black_sheep.jpg';
@@ -88,6 +90,9 @@ export class ClickSlideComponent {
   get_current_path() {
     return this.current_path;
   }
+  ngOnDestroy() {
+    clearInterval(this.time_interval);
+  }
 
   set_size(size: number) {
     this.size = size;
@@ -115,10 +120,12 @@ export class ClickSlideComponent {
         true;
     }
     this.shuffling();
+
     this.start_timer();
     this.is_solving = true;
   }
   start_timer() {
+    clearInterval(this.time_interval);
     this.start_time = Date.now();
 
     this.time_interval = setInterval(() => {
@@ -139,6 +146,7 @@ export class ClickSlideComponent {
     return number_of_cols[size];
   }
   change_picture(step: number) {
+    this.is_picture_changing = true;
     this.picture += step;
     if (this.picture == -1) {
       this.picture = 2;
@@ -151,6 +159,83 @@ export class ClickSlideComponent {
       this.picture_size = 720;
       this.current_path = this.paths[this.picture];
     }
+
+    let picture_0 = document.getElementById('picture_0');
+    let picture_1 = document.getElementById('picture_1');
+    let picture_2 = document.getElementById('picture_2');
+    let deltaX = 0;
+    let deltaY = 0;
+    if (picture_0 && picture_1 && picture_2) {
+      if (
+        picture_0.getBoundingClientRect() &&
+        picture_1.getBoundingClientRect()
+      ) {
+        if (step == 1) {
+          deltaX =
+            picture_0.getBoundingClientRect().left -
+            picture_1.getBoundingClientRect().left;
+          deltaY =
+            picture_0.getBoundingClientRect().top -
+            picture_1.getBoundingClientRect().top;
+        } else {
+          deltaX =
+            picture_2.getBoundingClientRect().left -
+            picture_1.getBoundingClientRect().left;
+          deltaY =
+            picture_2.getBoundingClientRect().top -
+            picture_1.getBoundingClientRect().top;
+        }
+      }
+      picture_0.style.transition = 'transform 1s ease';
+      picture_1.style.transition = 'transform 1s ease';
+      picture_2.style.transition = 'transform 1s ease';
+      if (step == 1) {
+        picture_0.style.transform = `translate(${-2 * deltaX}px, ${
+          -2 * deltaY
+        }px)`;
+        picture_1.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        picture_2.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+      } else {
+        console.log('tu');
+        picture_2.style.zIndex = '0';
+        picture_1.style.zIndex = '1';
+        picture_0.style.zIndex = '1';
+        picture_0.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        picture_1.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        picture_2.style.transform = `translate(${-2 * deltaX}px, ${
+          -2 * deltaY
+        }px)`;
+      }
+    }
+
+    setTimeout(() => {
+      if (picture_0 && picture_1 && picture_2) {
+        picture_0.style.transition = '';
+        picture_1.style.transition = '';
+        picture_2.style.transition = '';
+
+        picture_0.style.transform = '';
+        picture_1.style.transform = '';
+        picture_2.style.transform = '';
+        if (step == -1) {
+          picture_2.style.zIndex = '0';
+          picture_1.style.zIndex = '0';
+          picture_0.style.zIndex = '0';
+          document.getElementById('slider')?.insertBefore(picture_2, picture_0);
+          picture_2.id = 'picture_0';
+          picture_0.id = 'picture_1';
+          picture_1.id = 'picture_2';
+        } else {
+          document.getElementById('slider')?.insertBefore(picture_2, picture_0);
+          document.getElementById('slider')?.insertBefore(picture_1, picture_2);
+          picture_2.id = 'picture_1';
+          picture_0.id = 'picture_2';
+          picture_1.id = 'picture_0';
+        }
+      }
+      this.is_picture_changing = false;
+    }, 1000);
+
     this.set_size(this.size);
   }
   block_switch(block_position: number) {
@@ -201,17 +286,19 @@ export class ClickSlideComponent {
   }
   check_win() {
     let win = true;
-    this.background_pictures_coords.forEach((element) => {
-      if (element.id != element.place_id) {
+    for (let i = 0; i < this.background_pictures_coords.length; i++) {
+      if (
+        this.background_pictures_coords[i].id !=
+        this.background_pictures_coords[i].place_id
+      ) {
         win = false;
       }
-    });
+    }
+
     if (win) {
       clearInterval(this.time_interval);
       this.is_solving = false;
-      setTimeout(() => {
-        alert(document.getElementById('timer')?.innerText);
-      }, 20);
+      console.log(document.getElementById('timer')?.innerText);
     }
   }
   shuffling() {
@@ -221,7 +308,7 @@ export class ClickSlideComponent {
       );
       this.block_switch(this.switching_blocks[block_to_switch_index]);
     }
-    if (!this.isSolvable(this.background_pictures_coords)) {
+    if (!this.is_solvable(this.background_pictures_coords)) {
       this.shuffling();
     }
   }
@@ -231,7 +318,7 @@ export class ClickSlideComponent {
     });
     this.check_win();
   }
-  isSolvable(coords: click_and_slide_coords[]): boolean {
+  is_solvable(coords: click_and_slide_coords[]): boolean {
     let inversions = 0;
     for (let i = 0; i < coords.length - 1; i++) {
       for (let j = i + 1; j < coords.length; j++) {
