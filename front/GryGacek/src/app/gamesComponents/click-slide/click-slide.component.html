@@ -1,7 +1,7 @@
 <div
   class="flex flex-col xl:flex-row-reverse justify-center items-center max-w-full"
 >
-  <div class="flex flex-col xl:w-2/3 min-w-[760px] justify-center items-center">
+  <div class="flex flex-col xl:w-2/3 justify-center items-center">
     <div class="flex flex-row bg-rose-900 rounded-lg my-2 py-2">
       @for (item of sizes; track $index) {
       <div
@@ -27,7 +27,6 @@
       }@else {
 
       <div
-        class="border-black bg-no-repeat"
         [style.width.px]="box_size"
         [style.height.px]="box_size"
         [style.background-image]="'url(' + get_current_path() + ')'"
@@ -59,7 +58,7 @@
   </div>
 
   <div
-    class="flex flex-row xl:flex-col w-full xl:w-1/4 justify-center items-center relative"
+    class="flex flex-row xl:flex-col w-full xl:w-1/4 justify-center items-center"
     id="slider"
   >
     <div
@@ -73,7 +72,11 @@
     </div>
     @for(picture of paths;track $index) {
     <div
-      [ngClass]="' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40'"
+      [ngClass]="
+        $index == 1
+          ? ' m-2 w-28 h-28 md:w-40 md:h-40 xl:w-48 xl:h-48 '
+          : ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40 '
+      "
       [id]="'picture_' + $index"
     >
       <img [src]="picture" alt="" />

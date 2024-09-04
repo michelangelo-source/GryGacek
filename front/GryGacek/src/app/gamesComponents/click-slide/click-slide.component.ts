@@ -52,12 +52,62 @@ export class ClickSlideComponent {
   current_black_position = this.size * this.size - 1;
   background_pictures_coords: click_and_slide_coords[] = [];
   time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
-
+  mode = 'big';
   ngOnInit() {
+    const keyframe1 = `
+   @keyframes change_size_small {
+  0% {
+    width: 80px;
+    height: 80px;
+  }
+
+  100% {
+    width: 112px;
+    height: 112px;
+  }
+}
+  `;
+    const keyframe2 = `
+@keyframes change_size_normal {
+  0% {
+    width: 128px;
+    height: 128px;
+  }
+
+  100% {
+    width: 160px;
+    height: 160px;
+  }
+}
+ `;
+    const keyframe3 = `
+@keyframes change_size_big {
+  0% {
+    width: 160px;
+    height: 160px;
+  }
+
+  100% {
+    width: 192px;
+    height: 192px;
+  }
+}
+`;
+
+    document.styleSheets[0].insertRule(keyframe1);
+    document.styleSheets[0].insertRule(keyframe2);
+    document.styleSheets[0].insertRule(keyframe3);
+
     if (window.innerWidth < 768) {
+      this.mode = 'small';
       this.picture_size = 360;
       this.current_path = this.paths_mini[this.picture];
     } else {
+      if (window.innerWidth <= 1280) {
+        this.mode = 'normal';
+      } else {
+        this.mode = 'big';
+      }
       this.picture_size = 720;
       this.current_path = this.paths[this.picture];
     }
@@ -70,6 +120,7 @@ export class ClickSlideComponent {
     this.set_size(this.size);
     window.addEventListener('resize', () => {
       if (window.innerWidth < 768) {
+        this.mode = 'small';
         this.picture_size = 360;
         this.current_path = this.paths_mini[this.picture];
         if (!this.is_last_cut_to_small) {
@@ -77,6 +128,11 @@ export class ClickSlideComponent {
           this.is_last_cut_to_small = true;
         }
       } else {
+        if (window.innerWidth >= 1280) {
+          this.mode = 'big';
+        } else {
+          this.mode = 'normal';
+        }
         this.picture_size = 720;
         this.current_path = this.paths[this.picture];
         if (this.is_last_cut_to_small) {
@@ -152,64 +208,77 @@ export class ClickSlideComponent {
       this.picture = 2;
     }
     this.picture = this.picture % this.paths.length;
-    if (window.innerWidth < 768) {
-      this.picture_size = 360;
-      this.current_path = this.paths_mini[this.picture];
-    } else {
-      this.picture_size = 720;
-      this.current_path = this.paths[this.picture];
-    }
 
     let picture_0 = document.getElementById('picture_0');
     let picture_1 = document.getElementById('picture_1');
     let picture_2 = document.getElementById('picture_2');
+    let deltaXend = 0;
+    let deltaYend = 0;
     let deltaX = 0;
     let deltaY = 0;
     if (picture_0 && picture_1 && picture_2) {
-      if (
-        picture_0.getBoundingClientRect() &&
-        picture_1.getBoundingClientRect()
-      ) {
-        if (step == 1) {
-          deltaX =
-            picture_0.getBoundingClientRect().left -
-            picture_1.getBoundingClientRect().left;
-          deltaY =
-            picture_0.getBoundingClientRect().top -
-            picture_1.getBoundingClientRect().top;
-        } else {
-          deltaX =
-            picture_2.getBoundingClientRect().left -
-            picture_1.getBoundingClientRect().left;
-          deltaY =
-            picture_2.getBoundingClientRect().top -
-            picture_1.getBoundingClientRect().top;
-        }
+      deltaXend =
+        (picture_0.getBoundingClientRect().left -
+          picture_2.getBoundingClientRect().left) /
+        2;
+      deltaYend =
+        (picture_0.getBoundingClientRect().top -
+          picture_2.getBoundingClientRect().top) /
+        2;
+
+      if (this.mode == 'big') {
+        deltaX = 0;
+        deltaY = (picture_0.getBoundingClientRect().height + 16) * -1;
+      } else {
+        deltaY = 0;
+        deltaX = (picture_0.getBoundingClientRect().height + 16) * -1;
       }
+
+      console.log('deltaXend:', deltaXend, 'deltaYend:', deltaYend);
+      console.log('deltaX:', deltaX, 'deltaY:', deltaY);
       picture_0.style.transition = 'transform 1s ease';
       picture_1.style.transition = 'transform 1s ease';
       picture_2.style.transition = 'transform 1s ease';
+
+      picture_1.style.animation = 'change_size_' + this.mode + ' 1s 1';
+      picture_1.style.animationDirection = 'reverse';
+      picture_1.style.animationTimingFunction = 'ease';
+
       if (step == 1) {
-        picture_0.style.transform = `translate(${-2 * deltaX}px, ${
-          -2 * deltaY
+        picture_2.style.animation = 'change_size_' + this.mode + ' 1s 1';
+        picture_2.style.animationTimingFunction = 'ease';
+
+        picture_0.style.transform = `translate(${-2 * deltaXend}px, ${
+          -2 * deltaYend
         }px)`;
-        picture_1.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        picture_1.style.transform = `translate(${deltaX}px, ${deltaY}px) `;
         picture_2.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
       } else {
-        console.log('tu');
+        picture_0.style.animation = 'change_size_' + this.mode + ' 1s 1';
+        picture_0.style.animationTimingFunction = 'ease';
         picture_2.style.zIndex = '0';
         picture_1.style.zIndex = '1';
         picture_0.style.zIndex = '1';
-        picture_0.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-        picture_1.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-        picture_2.style.transform = `translate(${-2 * deltaX}px, ${
-          -2 * deltaY
+
+        picture_0.style.transform = `translate(${deltaX * -1}px, ${
+          deltaY * -1
+        }px)`;
+        picture_1.style.transform = `translate(${deltaX * -1}px, ${
+          deltaY * -1
+        }px)`;
+
+        picture_2.style.transform = `translate(${2 * deltaXend}px, ${
+          2 * deltaYend
         }px)`;
       }
     }
 
     setTimeout(() => {
       if (picture_0 && picture_1 && picture_2) {
+        picture_0.style.animation = '';
+        picture_1.style.animation = '';
+        picture_2.style.animation = '';
+
         picture_0.style.transition = '';
         picture_1.style.transition = '';
         picture_2.style.transition = '';
@@ -217,7 +286,13 @@ export class ClickSlideComponent {
         picture_0.style.transform = '';
         picture_1.style.transform = '';
         picture_2.style.transform = '';
+        picture_1.classList.value =
+          ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
+        // picture_1.style.width = dimensions + 'px';
+        // picture_1.style.height = dimensions + 'px';
         if (step == -1) {
+          // picture_0.style.width = dimensions + 32 + 'px';
+          // picture_0.style.height = dimensions + 32 + 'px';
           picture_2.style.zIndex = '0';
           picture_1.style.zIndex = '0';
           picture_0.style.zIndex = '0';
@@ -225,18 +300,36 @@ export class ClickSlideComponent {
           picture_2.id = 'picture_0';
           picture_0.id = 'picture_1';
           picture_1.id = 'picture_2';
+          picture_0.classList.value =
+            'm-2 w-28 h-28 md:w-40 md:h-40 xl:w-48 xl:h-48';
+
+          picture_2.classList.value =
+            ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
         } else {
+          // picture_2.style.width = dimensions + 32 + 'px';
+          // picture_2.style.height = dimensions + 32 + 'px';
           document.getElementById('slider')?.insertBefore(picture_2, picture_0);
           document.getElementById('slider')?.insertBefore(picture_1, picture_2);
           picture_2.id = 'picture_1';
           picture_0.id = 'picture_2';
           picture_1.id = 'picture_0';
+          picture_2.classList.value =
+            'm-2 w-28 h-28 md:w-40 md:h-40 xl:w-48 xl:h-48';
+
+          picture_0.classList.value =
+            ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
         }
       }
       this.is_picture_changing = false;
+      if (window.innerWidth < 768) {
+        this.picture_size = 360;
+        this.current_path = this.paths_mini[this.picture];
+      } else {
+        this.picture_size = 720;
+        this.current_path = this.paths[this.picture];
+      }
+      this.set_size(this.size);
     }, 1000);
-
-    this.set_size(this.size);
   }
   block_switch(block_position: number) {
     for (let i = 0; i < this.switching_blocks.length; i++) {
