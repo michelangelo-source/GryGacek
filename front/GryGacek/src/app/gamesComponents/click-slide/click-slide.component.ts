@@ -234,8 +234,6 @@ export class ClickSlideComponent {
         deltaX = (picture_0.getBoundingClientRect().height + 16) * -1;
       }
 
-      console.log('deltaXend:', deltaXend, 'deltaYend:', deltaYend);
-      console.log('deltaX:', deltaX, 'deltaY:', deltaY);
       picture_0.style.transition = 'transform 1s ease';
       picture_1.style.transition = 'transform 1s ease';
       picture_2.style.transition = 'transform 1s ease';
@@ -288,11 +286,7 @@ export class ClickSlideComponent {
         picture_2.style.transform = '';
         picture_1.classList.value =
           ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
-        // picture_1.style.width = dimensions + 'px';
-        // picture_1.style.height = dimensions + 'px';
         if (step == -1) {
-          // picture_0.style.width = dimensions + 32 + 'px';
-          // picture_0.style.height = dimensions + 32 + 'px';
           picture_2.style.zIndex = '0';
           picture_1.style.zIndex = '0';
           picture_0.style.zIndex = '0';
@@ -302,12 +296,9 @@ export class ClickSlideComponent {
           picture_1.id = 'picture_2';
           picture_0.classList.value =
             'm-2 w-28 h-28 md:w-40 md:h-40 xl:w-48 xl:h-48';
-
           picture_2.classList.value =
             ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
         } else {
-          // picture_2.style.width = dimensions + 32 + 'px';
-          // picture_2.style.height = dimensions + 32 + 'px';
           document.getElementById('slider')?.insertBefore(picture_2, picture_0);
           document.getElementById('slider')?.insertBefore(picture_1, picture_2);
           picture_2.id = 'picture_1';
@@ -315,7 +306,6 @@ export class ClickSlideComponent {
           picture_1.id = 'picture_0';
           picture_2.classList.value =
             'm-2 w-28 h-28 md:w-40 md:h-40 xl:w-48 xl:h-48';
-
           picture_0.classList.value =
             ' m-2 w-20 h-20 md:w-32 md:h-32 xl:w-40 xl:h-40';
         }

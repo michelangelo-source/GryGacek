@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Ttt3dComponent } from './ttt3d.component';
+import { MinesweeperComponent } from './minesweeper.component';
 
-describe('Ttt3dComponent', () => {
-  let component: Ttt3dComponent;
-  let fixture: ComponentFixture<Ttt3dComponent>;
+describe('MinesweeperComponent', () => {
+  let component: MinesweeperComponent;
+  let fixture: ComponentFixture<MinesweeperComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Ttt3dComponent]
+      imports: [MinesweeperComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Ttt3dComponent);
+    fixture = TestBed.createComponent(MinesweeperComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

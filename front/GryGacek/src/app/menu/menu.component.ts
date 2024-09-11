@@ -10,7 +10,7 @@ import { game } from '../../models/game';
 })
 export class MenuComponent {
   games: game[] = [
-    { id: 0, name: '3D Tic Tac Toe' },
+    { id: 0, name: 'Minesweeper' },
     { id: 1, name: 'Super Tic Tac Toe' },
     { id: 2, name: 'Tetris' },
     { id: 3, name: 'Click And Slide' },
