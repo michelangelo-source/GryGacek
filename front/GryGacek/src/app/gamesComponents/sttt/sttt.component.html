@@ -16,53 +16,37 @@
           @if(big_cells_results[iid].char=='none'){ @for(cell of cells;track
           $index){ @if($index%3==0){
           <tr></tr>
-          } @switch (cell.char) { @case ("none") { @if(cell.is_active){
+          }@if(cell.char=="none") {
+
           <td
-            class="w-12 h-12 border-2 border-black bg-lime-300"
-            (click)="add_chart(iid, $index)"
+            [classList]="
+              cell.is_active
+                ? 'w-10 h-10 md:w-12 md:h-12 border-2 border-black bg-lime-300'
+                : 'w-10 h-10 md:w-12 md:h-12 border-2 border-black '
+            "
+            (click)="cell.is_active ? add_chart(iid, $index) : null"
           ></td>
-          }@else{
-          <td class="w-12 h-12 border-2 border-black"></td>
-          } } @case ("cross") {
+
+          } @else {
           <td
-            class="items-center w-12 h-12 border-2 border-black font-black text-3xl"
+            class="items-center w-10 h-10 md:w-12 md:h-12 border-2 border-black font-black text-3xl"
           >
-            ✖️
+            <img [src]="get_picture_path(cell.char)" alt="" />
           </td>
-          }@case ("circle") {
-          <td
-            class="items-center w-12 h-12 border-2 border-black font-black text-3xl"
-          >
-            ⭕
-          </td>
-          } } }}@else { @if ( big_cells_results[iid].char=='cross' ) {
+          } }}@else {
+
           <tr></tr>
           <td>
             <div
-              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
+              class="w-[120px] h-[120px] md:w-36 md:h-36 flex justify-center items-center border-black font-black text-8xl"
             >
-              ✖️
+              <img
+                [src]="get_picture_path(big_cells_results[iid].char)"
+                alt=""
+              />
             </div>
           </td>
-          } @if ( big_cells_results[iid].char=='circle' ) {
-          <tr></tr>
-          <td>
-            <div
-              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
-            >
-              ⭕
-            </div>
-          </td>
-          }@if ( big_cells_results[iid].char=='tie' ) {
-          <tr></tr>
-          <td>
-            <div
-              class="w-36 h-36 flex justify-center items-center border-black font-black text-8xl"
-            >
-              ✅
-            </div>
-          </td>
-          } }
+          }
         </table>
       </td>
       }

@@ -9,6 +9,14 @@ import { stttCell } from '../../../models/stttCell';
   styleUrl: './sttt.component.scss',
 })
 export class StttComponent {
+  cross_path = '/assets/images/sttt/cross.png';
+  circle_path = '/assets/images/sttt/circle.png';
+  draw_path = '/assets/images/sttt/draw.png';
+  path: { [result: string]: string } = {
+    cross: this.cross_path,
+    circle: this.circle_path,
+    tie: this.draw_path,
+  };
   cell_table: stttCell[][] = [];
   who_moves: boolean = true;
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
@@ -32,6 +40,9 @@ export class StttComponent {
       }
       this.cell_table.push(tmp_cell_table);
     }
+  }
+  get_picture_path(result: string) {
+    return this.path[result];
   }
   check(table: stttCell[]) {
     //0,1,2

@@ -3,7 +3,7 @@
   @for (row of board;track row;let rowId=$index ){
 
   <div class="flex flex-row">
-    @for(cell of row;track $index){
+    @for(cell of row;track $index){ @if(rowId>=2){
     <div class="w-6 h-6 border border-black">
       @if(cell.color!="white"){
       <img
@@ -13,7 +13,7 @@
         alt="{{ cell.color }}"
       />}
     </div>
-    }
+    } }
   </div>
   }
   <div class="flex flex-row">

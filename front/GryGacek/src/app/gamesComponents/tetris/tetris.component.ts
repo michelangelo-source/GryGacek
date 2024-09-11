@@ -123,7 +123,7 @@ export class TetrisComponent {
   }
 
   nextblock() {
-    if (this.board[0][5].color != 'white') {
+    if (this.board[2][5].color != 'white') {
       this.gameover();
       return;
     }
