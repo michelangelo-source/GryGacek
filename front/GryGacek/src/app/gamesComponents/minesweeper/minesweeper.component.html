@@ -1,23 +1,116 @@
-<div class="flex flex-col justify-center items-center m-20">
-  @for(row of board ;track row;let x_coord=$index){
-
-  <div class="flex flex-row">
-    @for(cell of row;track cell.id;let y_coord=$index){
+<div class="flex flex-col m-4 md:m-20 items-center">
+  <div
+    class="grid grid-cols-2 gap-4 md:flex md:flex-row items-center justify-center"
+  >
+    @for(mode of modes;track $index){
     <div
-      [classList]="
-        cell.is_coverd
-          ? 'w-16 h-16 border hover:bg-red-800 border-black bg-rose-950 text-white flex justify-center items-center'
-          : 'w-16 h-16 border  border-black bg-rose-900  text-white flex justify-center items-center'
-      "
-      (click)="
-        !cell.is_flag && cell.is_coverd ? check_bomb(x_coord, y_coord) : null
-      "
+      (click)="set_mode($index)"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2 border border-black"
     >
-      {{
-        cell.is_coverd ? null : cell.is_bomb ? "bomb" : cell.bombs_around_number
-      }}
+      {{ mode }}
     </div>
     }
   </div>
+  @if(mode=="custom"){
+  <div class="flex flex-col bg-rose-950 rounded-xl p-2">
+    <form
+      (ngSubmit)="onSubmit()"
+      #actorForm="ngForm"
+      class="flex flex-col text-white"
+    >
+      <label for="col_number">How many columns?</label>
+      <input
+        class=""
+        [(ngModel)]="col"
+        name="col_number"
+        type="range"
+        [min]="'5'"
+        [max]="'99'"
+      />
+      {{ col }}
+      <label for="row_number">How many rows?</label>
+      <input
+        [(ngModel)]="row"
+        name="row_number"
+        type="range"
+        [min]="'5'"
+        [max]="'99'"
+      />
+      {{ row }}
+      <label for="bomb_number">How many bombs?</label>
+      <input
+        [(ngModel)]="bomb"
+        name="bomb_number "
+        type="range"
+        [min]="'1'"
+        [max]="(col * row) / 3"
+      />
+      {{ bomb }}
+      <button type="submit">Submit</button>
+    </form>
+  </div>
   }
+  <div
+    class="grid grid-cols-2 gap-4 my-4 md:flex md:justify-center md:items-center"
+  >
+    <div
+      (click)="restart()"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2 border border-black"
+    >
+      reset
+    </div>
+    <div
+      (click)="set_flagmode()"
+      class="w-20 md:hidden h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2 border border-black"
+      [style.backgroundColor]="flagmode_active ? '#991b1b' : '#4c0519'"
+    >
+      <img class="h-12" [src]="flag_path" alt="flag" />
+    </div>
+  </div>
+
+  <div class="max-w-full overflow-auto">
+    @for(row of board ;track row;let x_coord=$index){
+
+    <div class="flex flex-row">
+      @for(cell of row;track cell.id;let y_coord=$index){
+      <div
+        [classList]="
+          cell.is_coverd
+            ? 'min-w-8 max-w-8 h-8 border hover:bg-red-800 border-black bg-rose-950 text-white flex justify-center items-center'
+            : 'min-w-8 max-w-8 h-8 border  border-black bg-rose-900  text-white flex justify-center items-center'
+        "
+        (click)="
+          cell.is_coverd
+            ? flagmode_active
+              ? flag($event, x_coord, y_coord)
+              : cell.is_flag
+              ? null
+              : check_bomb(x_coord, y_coord)
+            : null
+        "
+        (contextmenu)="flag($event, x_coord, y_coord)"
+      >
+        @if(cell.is_coverd){ @if( cell.is_flag){
+        <img [src]="flag_path" alt="flag" />
+        } }@else{ @if(cell.is_bomb){ <img [src]="bomb_path" alt="bomb" /> }@else
+        {
+        {{ cell.bombs_around_number }}
+        } }
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  <div id="timer" class="bg-rose-950 text-white text-xl rounded-lg my-2 px-4">
+    {{ hours < 10 ? "0" + hours : hours }}:{{
+      minutes < 10 ? "0" + minutes : minutes
+    }}:{{ seconds < 10 ? "0" + seconds : seconds }}.{{
+      milisec < 100 && milisec >= 10
+        ? "0" + milisec
+        : milisec < 10
+        ? "00" + milisec
+        : milisec
+    }}
+  </div>
 </div>
