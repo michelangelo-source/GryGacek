@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { stttCell } from '../../../models/stttCell';
+
+export type stttCell = {
+  big_cell_id: number;
+  small_cell_id: number;
+  is_active: boolean;
+  char: string;
+};
 
 @Component({
   selector: 'app-sttt',

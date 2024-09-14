@@ -1,4 +1,11 @@
 <div class="mt-10 w-svw flex items-center justify-center flex-col">
+  @if(is_end){
+  <app-save-score
+    [game]="'tetris'"
+    [score]="line_removed"
+    (end)="reset($event)"
+  ></app-save-score>
+  }
   <h1>Linie: {{ line_removed }} Level {{ level }}</h1>
   @for (row of board;track row;let rowId=$index ){
 

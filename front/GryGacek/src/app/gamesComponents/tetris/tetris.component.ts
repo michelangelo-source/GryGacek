@@ -1,6 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { rotations } from './tetris.rotations';
 import { starting_positions } from './tetris.startingPositions';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SaveScoreComponent } from '../../save-score/save-score.component';
 export type cellTetris = {
   color: string;
   occupied: boolean;
@@ -11,7 +14,7 @@ export type cellTetris = {
 @Component({
   selector: 'app-tetris',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule, SaveScoreComponent],
   templateUrl: './tetris.component.html',
   styleUrl: './tetris.component.scss',
 })
@@ -23,7 +26,7 @@ export class TetrisComponent {
   line_removed: number = 0;
   level: number = 1;
   fall_time: number = 1000;
-
+  is_end = false;
   blue_path: string = '/assets/images/tetris/blue.png';
   green_path: string = '/assets/images/tetris/green.png';
   red_path: string = '/assets/images/tetris/red.png';
@@ -75,7 +78,16 @@ export class TetrisComponent {
       falling = this.fall();
     }
   }
+  reset(is_ok: boolean) {
+    console.log(is_ok);
+    this.ngOnInit();
+  }
   ngOnInit() {
+    clearInterval(this.falling_interval);
+    this.board = [];
+    this.line_removed = 0;
+    this.level = 1;
+    this.is_end = false;
     let row: cellTetris[] = [];
     for (let i = 0; i < 20; i++) {
       row = [];
@@ -118,8 +130,7 @@ export class TetrisComponent {
     return this.paths[color];
   }
   gameover() {
-    alert('dupa');
-    window.location.reload();
+    this.is_end = true;
   }
 
   nextblock() {

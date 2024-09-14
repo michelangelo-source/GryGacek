@@ -1,0 +1,28 @@
+<div [classList]="is_end ? 'block' : 'hidden'">
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-900 text-white p-2 rounded-xl"
+  >
+    <label for="col_number">Insert your nick: </label>
+    <input
+      class="bg-rose-950 text-white"
+      [(ngModel)]="player_nikcname"
+      name="col_number"
+      type="text"
+    />
+
+    <div class="flex flex-row">
+      <div
+        (click)="save_score(true)"
+        class="bg-rose-950 hover:bg-red-900 m-2 p-2 rounded-xl"
+      >
+        Save score
+      </div>
+      <div
+        (click)="save_score(false)"
+        class="bg-rose-950 hover:bg-red-900 m-2 p-2 rounded-xl"
+      >
+        Don't save score
+      </div>
+    </div>
+  </div>
+</div>

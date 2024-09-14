@@ -13,11 +13,7 @@
   </div>
   @if(mode=="custom"){
   <div class="flex flex-col bg-rose-950 rounded-xl p-2">
-    <form
-      (ngSubmit)="onSubmit()"
-      #actorForm="ngForm"
-      class="flex flex-col text-white"
-    >
+    <form (ngSubmit)="onSubmit()" class="flex flex-col text-white">
       <label for="col_number">How many columns?</label>
       <input
         class=""

@@ -259,6 +259,7 @@ export class MinesweeperComponent {
     });
     setTimeout(() => {
       alert('dupa');
+      this.restart();
     }, 200);
   }
 }
