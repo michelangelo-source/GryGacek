@@ -1,4 +1,4 @@
-import { coords } from '../../../models/cords.type';
+import { coords } from '../../../models/cords';
 export let starting_positions: coords[][] = [
   [
     { x: 2, y: 7 },

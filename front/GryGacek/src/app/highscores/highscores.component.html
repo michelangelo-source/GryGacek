@@ -1,0 +1,101 @@
+<app-back-to-menu></app-back-to-menu>
+<div class="flex items-center justify-center flex-col">
+  <div class="flex flex-row">
+    <div
+      (click)="today()"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2"
+    >
+      Best Today
+    </div>
+    <div
+      (click)="bests()"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2"
+    >
+      Best of All
+    </div>
+    <div
+      (click)="week()"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2"
+    >
+      Best of Last Week
+    </div>
+  </div>
+  <form
+    (ngSubmit)="onSubmit()"
+    class="flex flex-row text-white bg-rose-900 rounded-xl"
+  >
+    <input
+      placeholder="nickname"
+      class="w-20 md:w-36 h-12 m-1 md:m-2 bg-rose-950 text-white rounded-xl"
+      [(ngModel)]="player_nickname"
+      name="col_number"
+      type="text"
+    />
+    <button
+      type="submit"
+      class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl hover:bg-red-800 text-white flex justify-center items-center m-1 md:m-2"
+    >
+      Submit
+    </button>
+  </form>
+  <table class="text-white w-1/3 m-2">
+    <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
+      <th
+        class="w-4 md:w-6 h-12 rounded-xl flex items-center justify-center mx-1"
+      ></th>
+      <th
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        nickname
+      </th>
+      <th
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        Score
+      </th>
+      <!-- @if(scores[0].mode){
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        Mode
+      </td>
+      } -->
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        Date
+      </td>
+    </tr>
+    @for (score of scores; track $index) {
+    <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
+      <td
+        class="w-4 md:w-6 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        {{ $index + 1 }}.
+      </td>
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        {{ score.nickname }}
+      </td>
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        {{ score.result }}
+      </td>
+      @if(score.mode!=undefined){
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        {{ score.mode }}
+      </td>
+      }
+      <td
+        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+      >
+        {{ score.date }}
+      </td>
+    </tr>
+    }
+  </table>
+</div>

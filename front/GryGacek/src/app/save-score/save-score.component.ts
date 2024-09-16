@@ -14,8 +14,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class SaveScoreComponent {
   private http = inject(HttpClient);
+
   is_end = true;
-  player_nikcname = '';
+  player_nickname = '';
   @Input() score: number | string = 0;
   @Input() mode?: string;
   @Input() game: string = '';
@@ -23,10 +24,10 @@ export class SaveScoreComponent {
   save_score(is_saved: boolean) {
     this.is_end = false;
     if (is_saved) {
-      if (this.player_nikcname.length > 0) {
+      if (this.player_nickname.length > 0) {
         this.http
           .post(backend_URL + ':' + backend_PORT + '/' + this.game, {
-            nickname: this.player_nikcname,
+            nickname: this.player_nickname,
             result: this.score,
           })
           .subscribe(() => {});

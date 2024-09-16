@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, importProvidersFrom } from '@angular/core';
 import { MenuComponent } from './menu/menu.component';
 import { TetrisComponent } from './gamesComponents/tetris/tetris.component';
 import { StttComponent } from './gamesComponents/sttt/sttt.component';
@@ -6,7 +6,8 @@ import { ClickSlideComponent } from './gamesComponents/click-slide/click-slide.c
 import { KulkiComponent } from './gamesComponents/kulki/kulki.component';
 import { BackToMenuComponent } from './back-to-menu/back-to-menu.component';
 import { MinesweeperComponent } from './gamesComponents/minesweeper/minesweeper.component';
-
+import { HighscoresComponent } from './highscores/highscores.component';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,6 +19,8 @@ import { MinesweeperComponent } from './gamesComponents/minesweeper/minesweeper.
     KulkiComponent,
     BackToMenuComponent,
     MinesweeperComponent,
+    HighscoresComponent,
+    RouterModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

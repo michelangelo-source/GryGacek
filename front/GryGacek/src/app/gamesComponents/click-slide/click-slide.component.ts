@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { coords } from '../../../models/cords.type';
+import { coords } from '../../../models/cords';
 import { NgClass } from '@angular/common';
-
+import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 interface click_and_slide_coords extends coords {
   id: number;
   place_id: number;
@@ -10,7 +10,7 @@ interface click_and_slide_coords extends coords {
 @Component({
   selector: 'app-click-slide',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, BackToMenuComponent],
   templateUrl: './click-slide.component.html',
   styleUrl: './click-slide.component.scss',
 })

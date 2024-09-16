@@ -1,4 +1,4 @@
-import { coords } from '../../../models/cords.type';
+import { coords } from '../../../models/cords';
 export let rotations: coords[][][] = [
   //blue
   [

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-
+import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 export type stttCell = {
   big_cell_id: number;
   small_cell_id: number;
@@ -10,7 +10,7 @@ export type stttCell = {
 @Component({
   selector: 'app-sttt',
   standalone: true,
-  imports: [],
+  imports: [BackToMenuComponent],
   templateUrl: './sttt.component.html',
   styleUrl: './sttt.component.scss',
 })

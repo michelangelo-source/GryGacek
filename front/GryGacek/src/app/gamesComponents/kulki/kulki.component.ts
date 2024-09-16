@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { coords } from '../../../models/cords.type';
-
+import { coords } from '../../../models/cords';
+import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 export interface squere extends coords {
   color: string;
   is_selected: boolean;
@@ -15,7 +15,7 @@ export interface path_node extends coords {
 @Component({
   selector: 'app-kulki',
   standalone: true,
-  imports: [],
+  imports: [BackToMenuComponent],
   templateUrl: './kulki.component.html',
   styleUrl: './kulki.component.scss',
 })
@@ -85,6 +85,10 @@ export class KulkiComponent {
     }
 
     this.add_balls();
+  }
+  ngOnDestroy() {
+    clearInterval(this.animation_interval);
+    clearInterval(this.selected_interval);
   }
   get_color_path(color: string) {
     return this.paths[color];

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { coords } from '../../../models/cords.type';
+import { coords } from '../../../models/cords';
 import { FormsModule } from '@angular/forms';
-
+import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { CommonModule } from '@angular/common';
 interface minesweeper_cell extends coords {
   id: number;
@@ -14,7 +14,7 @@ interface minesweeper_cell extends coords {
 @Component({
   selector: 'app-minesweeper',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BackToMenuComponent],
   templateUrl: './minesweeper.component.html',
   styleUrl: './minesweeper.component.scss',
 })

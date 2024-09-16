@@ -4,6 +4,8 @@ import { starting_positions } from './tetris.startingPositions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SaveScoreComponent } from '../../save-score/save-score.component';
+import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
+import { RouterModule } from '@angular/router';
 export type cellTetris = {
   color: string;
   occupied: boolean;
@@ -14,7 +16,13 @@ export type cellTetris = {
 @Component({
   selector: 'app-tetris',
   standalone: true,
-  imports: [CommonModule, FormsModule, SaveScoreComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SaveScoreComponent,
+    BackToMenuComponent,
+    RouterModule,
+  ],
   templateUrl: './tetris.component.html',
   styleUrl: './tetris.component.scss',
 })
@@ -81,6 +89,9 @@ export class TetrisComponent {
   reset(is_ok: boolean) {
     console.log(is_ok);
     this.ngOnInit();
+  }
+  ngOnDestroy() {
+    clearInterval(this.falling_interval);
   }
   ngOnInit() {
     clearInterval(this.falling_interval);
