@@ -14,7 +14,7 @@ public interface TetrisRepository extends JpaRepository<TetrisResult,Double>{
 @Query(value = "insert into Tetris_Result (nickname,result,date )values(?1,?2,?3);", nativeQuery = true)
     void saveResult(String nickname, int result, Date date);
 
-    List<TetrisResult> findByNickname(String nickname);
+    List<TetrisResult> findByNicknameOrderByResultDesc(String nickname);
 
 
     List<TetrisResult> findTOP100ByOrderByResultDesc();

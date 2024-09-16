@@ -18,7 +18,7 @@ public class TetrisService {
     }
 
     public List<TetrisResult> getResultsByNickname(String nickname) {
-        return tetrisRepository.findByNickname(nickname);
+        return tetrisRepository.findByNicknameOrderByResultDesc(nickname);
     }
     public List<TetrisResult> getBestByDates(LocalDate end_date) {
         Date start_date=new Date();
