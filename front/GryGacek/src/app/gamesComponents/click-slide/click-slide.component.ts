@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { coords } from '../../../models/cords';
 import { NgClass } from '@angular/common';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
+export const ClickAndSlide_sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
 interface click_and_slide_coords extends coords {
   id: number;
   place_id: number;
@@ -25,7 +26,7 @@ export class ClickSlideComponent {
   is_solving = false;
   is_picture_changing = false;
   picture = 1;
-  sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
+  sizes = ClickAndSlide_sizes;
   picture_size = 720;
   arrow_path = '/assets/images/arrow.png';
   mask_path = '/assets/images/click_and_slide/mask.jpg';

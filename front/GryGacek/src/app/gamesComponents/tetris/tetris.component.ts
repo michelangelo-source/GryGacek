@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { SaveScoreComponent } from '../../save-score/save-score.component';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { RouterModule } from '@angular/router';
+import { HighscoreBtnComponent } from '../../highscore-btn/highscore-btn.component';
 export type cellTetris = {
   color: string;
   occupied: boolean;
@@ -21,6 +22,7 @@ export type cellTetris = {
     FormsModule,
     SaveScoreComponent,
     BackToMenuComponent,
+    HighscoreBtnComponent,
     RouterModule,
   ],
   templateUrl: './tetris.component.html',

@@ -3,6 +3,9 @@ import { coords } from '../../../models/cords';
 import { FormsModule } from '@angular/forms';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { CommonModule } from '@angular/common';
+import { HighscoreBtnComponent } from '../../highscore-btn/highscore-btn.component';
+import { SaveScoreComponent } from '../../save-score/save-score.component';
+export const Minesweeper_modes = ['easy', 'normal', 'hard', 'custom'];
 interface minesweeper_cell extends coords {
   id: number;
   is_bomb: boolean;
@@ -14,7 +17,13 @@ interface minesweeper_cell extends coords {
 @Component({
   selector: 'app-minesweeper',
   standalone: true,
-  imports: [CommonModule, FormsModule, BackToMenuComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BackToMenuComponent,
+    HighscoreBtnComponent,
+    SaveScoreComponent,
+  ],
   templateUrl: './minesweeper.component.html',
   styleUrl: './minesweeper.component.scss',
 })
@@ -30,14 +39,16 @@ export class MinesweeperComponent {
   time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
   firstwin = true;
   flagmode_active = false;
-  modes: string[] = ['easy', 'normal', 'hard', 'custom'];
+  modes = Minesweeper_modes;
   col = 8;
   row = 8;
   bomb = 10;
-  mode = this.modes[0];
+  mode = Minesweeper_modes[0];
   board: minesweeper_cell[][] = [];
   not_bomb: minesweeper_cell[] = [];
   is_first_click = true;
+  is_end: boolean = false;
+  score: string = '';
 
   onSubmit() {
     this.mode = 'custom_end';
@@ -83,7 +94,7 @@ export class MinesweeperComponent {
       }
       this.restart();
     }
-    this.mode = this.modes[index_mode];
+    this.mode = Minesweeper_modes[index_mode];
   }
   ngOnInit() {
     this.create_board(this.col, this.row, this.bomb, -999, -999);
@@ -242,10 +253,12 @@ export class MinesweeperComponent {
     if (win && this.firstwin) {
       clearInterval(this.time_interval);
       this.firstwin = false;
-      console.log(document.getElementById('timer')?.innerText);
-      setTimeout(() => {
-        alert('wygrana');
-      }, 200);
+      const timerElement = document.getElementById('timer') as HTMLElement;
+      if (timerElement) {
+        this.score = timerElement.innerText;
+      }
+
+      this.is_end = true;
     }
   }
   game_over() {

@@ -25,11 +25,21 @@ export class SaveScoreComponent {
     this.is_end = false;
     if (is_saved) {
       if (this.player_nickname.length > 0) {
-        this.http
-          .post(backend_URL + ':' + backend_PORT + '/' + this.game, {
+        let body;
+        if (this.mode) {
+          body = body = {
+            gameMode: { gameMode: this.mode },
             nickname: this.player_nickname,
             result: this.score,
-          })
+          };
+        } else {
+          body = {
+            nickname: this.player_nickname,
+            result: this.score,
+          };
+        }
+        this.http
+          .post(backend_URL + ':' + backend_PORT + '/' + this.game, body)
           .subscribe(() => {});
       } else {
         alert('please insert your nick');

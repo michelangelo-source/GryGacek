@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { backend_PORT, backend_URL } from '../../properties';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Minesweeper_modes } from '../gamesComponents/minesweeper/minesweeper.component';
+import { ClickAndSlide_sizes } from '../gamesComponents/click-slide/click-slide.component';
 
 @Component({
   selector: 'app-highscores',
@@ -16,29 +18,54 @@ import { FormsModule } from '@angular/forms';
 })
 export class HighscoresComponent {
   player_nickname = '';
+  modes: string[] = [];
+  mode_index: number = 0;
   private http = inject(HttpClient);
   scores: Score[] = [];
   route: ActivatedRoute = inject(ActivatedRoute);
   game = '';
   constructor() {
     this.game = this.route.snapshot.params['game'];
+    if (this.game == 'minesweeper') {
+      this.modes = [...Minesweeper_modes];
+      this.modes.pop();
+    } else if (this.game == 'clickandslide') {
+      this.modes = ClickAndSlide_sizes;
+    }
     this.bests();
   }
   onSubmit() {
-    this.nickname_scores(this.player_nickname);
+    if (this.player_nickname.length > 0) {
+      this.nickname_scores(this.player_nickname);
+    }
+  }
+  set_mode(index: number) {
+    this.mode_index = index;
+    this.bests();
   }
   bests() {
     this.scores = [];
-    this.http
-      .get<Score[]>(
-        backend_URL + ':' + backend_PORT + '/' + this.game + '/results/bests'
-      )
-      .subscribe((res) => {
-        this.scores = res;
-      });
+    let url = '';
+    if (this.modes.length > 0) {
+      url =
+        backend_URL +
+        ':' +
+        backend_PORT +
+        '/' +
+        this.game +
+        '/results/bests/' +
+        this.modes[this.mode_index];
+    } else {
+      url =
+        backend_URL + ':' + backend_PORT + '/' + this.game + '/results/bests';
+    }
+    this.http.get<Score[]>(url).subscribe((res) => {
+      this.scores = res;
+    });
   }
   today() {
     this.scores = [];
+
     let core_date = new Date();
     let today: string = core_date.getFullYear() + '-';
     if (core_date.getMonth() + 1 < 10) {
@@ -49,13 +76,25 @@ export class HighscoresComponent {
       today += '0';
     }
     today += core_date.getDate();
-    this.http
-      .get<Score[]>(
-        backend_URL + ':' + backend_PORT + '/' + this.game + '/date/' + today
-      )
-      .subscribe((res) => {
-        this.scores = res;
-      });
+    let url = '';
+    if (this.modes.length > 0) {
+      url =
+        backend_URL +
+        ':' +
+        backend_PORT +
+        '/' +
+        this.game +
+        '/date/' +
+        today +
+        '/' +
+        this.modes[this.mode_index];
+    } else {
+      url =
+        backend_URL + ':' + backend_PORT + '/' + this.game + '/date/' + today;
+    }
+    this.http.get<Score[]>(url).subscribe((res) => {
+      this.scores = res;
+    });
   }
   week() {
     this.scores = [];
@@ -70,22 +109,52 @@ export class HighscoresComponent {
       week_ago += '0';
     }
     week_ago += core_date.getDate();
-    this.http
-      .get<Score[]>(
-        backend_URL + ':' + backend_PORT + '/' + this.game + '/date/' + week_ago
-      )
-      .subscribe((res) => {
-        this.scores = res;
-      });
+    let url = '';
+    if (this.modes.length > 0) {
+      url =
+        backend_URL +
+        ':' +
+        backend_PORT +
+        '/' +
+        this.game +
+        '/date/' +
+        week_ago +
+        '/' +
+        this.modes[this.mode_index];
+    } else {
+      url =
+        backend_URL +
+        ':' +
+        backend_PORT +
+        '/' +
+        this.game +
+        '/date/' +
+        week_ago;
+    }
+    this.http.get<Score[]>(url).subscribe((res) => {
+      this.scores = res;
+    });
   }
   nickname_scores(nickname: string) {
     this.scores = [];
-    this.http
-      .get<Score[]>(
-        backend_URL + ':' + backend_PORT + '/' + this.game + '/' + nickname
-      )
-      .subscribe((res) => {
-        this.scores = res;
-      });
+
+    let url = '';
+    if (this.modes.length > 0) {
+      url =
+        backend_URL +
+        ':' +
+        backend_PORT +
+        '/' +
+        this.game +
+        '/' +
+        nickname +
+        '/' +
+        this.modes[this.mode_index];
+    } else {
+      url = backend_URL + ':' + backend_PORT + '/' + this.game + '/' + nickname;
+    }
+    this.http.get<Score[]>(url).subscribe((res) => {
+      this.scores = res;
+    });
   }
 }

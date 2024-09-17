@@ -1,4 +1,12 @@
 <app-back-to-menu></app-back-to-menu>
+@if(is_end){
+<app-save-score
+  [mode]="mode"
+  [game]="'minesweeper'"
+  [score]="score"
+  (end)="restart()"
+></app-save-score>
+}
 <div class="flex flex-col m-4 md:m-20 items-center">
   <div
     class="grid grid-cols-2 gap-4 md:flex md:flex-row items-center justify-center"
@@ -110,4 +118,5 @@
         : milisec
     }}
   </div>
+  <app-higscore-btn [game]="'minesweeper'"></app-higscore-btn>
 </div>
