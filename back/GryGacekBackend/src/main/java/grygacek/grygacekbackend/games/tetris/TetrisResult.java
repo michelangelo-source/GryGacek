@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,10 +18,10 @@ import java.util.Date;
 @Table(name="tetris_result")
 public class TetrisResult {
     @Id
-    private double ID;
+    private long ID;
     private String nickname;
     private int result;
-    private Date date;
+    private LocalDate date;
 
 
 
