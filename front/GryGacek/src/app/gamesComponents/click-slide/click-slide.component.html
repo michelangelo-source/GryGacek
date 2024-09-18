@@ -1,4 +1,12 @@
 <app-back-to-menu></app-back-to-menu>
+@if(is_end){
+<app-save-score
+  [mode]="sizes[size - 3]"
+  [game]="'clickandslide'"
+  [score]="result"
+  (end)="restart()"
+></app-save-score>
+}
 <div
   class="flex flex-col xl:flex-row-reverse justify-center items-center max-w-full"
 >
@@ -93,5 +101,8 @@
       />
     </div>
   </div>
+</div>
+<div class="flex items-center justify-center">
+  <app-higscore-btn [game]="'clickandslide'"></app-higscore-btn>
 </div>
 <!-- pictuer taken from: https://stockcake.com/ -->

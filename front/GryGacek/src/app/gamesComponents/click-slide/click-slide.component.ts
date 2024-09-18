@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { coords } from '../../../models/cords';
 import { NgClass } from '@angular/common';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
+import { HighscoreBtnComponent } from '../../highscore-btn/highscore-btn.component';
+import { SaveScoreComponent } from '../../save-score/save-score.component';
 export const ClickAndSlide_sizes: string[] = ['3x3', '4x4', '5x5', '6x6'];
 interface click_and_slide_coords extends coords {
   id: number;
@@ -11,7 +13,12 @@ interface click_and_slide_coords extends coords {
 @Component({
   selector: 'app-click-slide',
   standalone: true,
-  imports: [NgClass, BackToMenuComponent],
+  imports: [
+    NgClass,
+    BackToMenuComponent,
+    HighscoreBtnComponent,
+    SaveScoreComponent,
+  ],
   templateUrl: './click-slide.component.html',
   styleUrl: './click-slide.component.scss',
 })
@@ -54,6 +61,8 @@ export class ClickSlideComponent {
   background_pictures_coords: click_and_slide_coords[] = [];
   time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
   mode = 'big';
+  is_end: boolean = false;
+  result: string = '';
   ngOnInit() {
     const keyframe1 = `
    @keyframes change_size_small {
@@ -150,7 +159,9 @@ export class ClickSlideComponent {
   ngOnDestroy() {
     clearInterval(this.time_interval);
   }
-
+  restart() {
+    this.set_size(this.size);
+  }
   set_size(size: number) {
     this.size = size;
     this.box_size = this.picture_size / this.size;
@@ -180,6 +191,7 @@ export class ClickSlideComponent {
 
     this.start_timer();
     this.is_solving = true;
+    this.is_end = false;
   }
   start_timer() {
     clearInterval(this.time_interval);
@@ -382,7 +394,9 @@ export class ClickSlideComponent {
     if (win) {
       clearInterval(this.time_interval);
       this.is_solving = false;
-      console.log(document.getElementById('timer')?.innerText);
+      this.is_end = true;
+      const scoreElement = document.getElementById('timer') as HTMLElement;
+      this.result = scoreElement.innerText;
     }
   }
   shuffling() {
