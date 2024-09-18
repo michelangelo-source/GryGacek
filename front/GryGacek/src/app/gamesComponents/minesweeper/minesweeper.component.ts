@@ -107,6 +107,7 @@ export class MinesweeperComponent {
     this.board[x][y].is_flag = !this.board[x][y].is_flag;
   }
   restart() {
+    this.is_end = false;
     this.is_first_click = true;
     this.create_board(this.col, this.row, this.bomb, -999, -999);
   }

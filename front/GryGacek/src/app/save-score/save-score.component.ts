@@ -20,15 +20,15 @@ export class SaveScoreComponent {
   @Input() score: number | string = 0;
   @Input() mode?: string;
   @Input() game: string = '';
-  @Output() end = new EventEmitter<boolean>();
+  @Output() end = new EventEmitter<void>();
   save_score(is_saved: boolean) {
     this.is_end = false;
     if (is_saved) {
       if (this.player_nickname.length > 0) {
         let body;
         if (this.mode) {
-          body = body = {
-            gameMode: { gameMode: this.mode },
+          body = {
+            gameMode: this.mode,
             nickname: this.player_nickname,
             result: this.score,
           };
@@ -47,6 +47,6 @@ export class SaveScoreComponent {
         return;
       }
     }
-    this.end.emit(true);
+    this.end.emit();
   }
 }

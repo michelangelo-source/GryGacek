@@ -88,8 +88,7 @@ export class TetrisComponent {
       falling = this.fall();
     }
   }
-  reset(is_ok: boolean) {
-    console.log(is_ok);
+  reset() {
     this.ngOnInit();
   }
   ngOnDestroy() {

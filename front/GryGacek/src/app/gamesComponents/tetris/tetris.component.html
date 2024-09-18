@@ -4,7 +4,7 @@
   <app-save-score
     [game]="'tetris'"
     [score]="line_removed"
-    (end)="reset($event)"
+    (end)="reset()"
   ></app-save-score>
   }
   <h1>Linie: {{ line_removed }} Level {{ level }}</h1>
