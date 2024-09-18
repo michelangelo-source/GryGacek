@@ -17,13 +17,12 @@ public class MinesweeperService {
 
     public void saveResult(MinesweeperResultDTO minesweeperResultDTO) {
         LocalDate date = LocalDate.now();
-        MinesweeperResult minesweeperResult = new MinesweeperResult();
-        minesweeperResult.setDate(date);
-        minesweeperResult.setNickname(minesweeperResultDTO.getNickname());
-        MinesweeperGameModes minesweeperGameModes = new MinesweeperGameModes(minesweeperResultDTO.getGameMode());
-        minesweeperResult.setGameMode(minesweeperGameModes);
-        minesweeperResult.setResult(Timestamp.valueOf(LocalDate.of(1970, 1, 1).atTime(minesweeperResultDTO.getResult())));
-        minesweeperRepository.saveResult(minesweeperResult.getGameMode().getGameMode(), minesweeperResult.getNickname(), minesweeperResult.getResult(), minesweeperResult.getDate());
+        minesweeperRepository.saveResult(
+                minesweeperResultDTO.getGameMode(),
+                minesweeperResultDTO.getNickname(),
+                Timestamp.valueOf(LocalDate.of(1970, 1, 1).atTime(minesweeperResultDTO.getResult())),
+                date
+        );
     }
 
     public List<MinesweeperResultDTO> getResultsByNickname(String nickname, String mode) {
