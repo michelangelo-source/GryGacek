@@ -1,9 +1,16 @@
 <app-back-to-menu></app-back-to-menu>
+@if(is_end){
+<app-save-score
+  [game]="'kulki'"
+  [score]="points"
+  (end)="reset()"
+></app-save-score>
+}
 <div class="w-max-svw h-min-max flex items-center justify-center flex-col">
   <div
     class="w-5/12 bg-black rounded-lg my-4 flex items-center justify-center text-stone-50"
   >
-    Twoje pkt: {{ points }}
+    Your points: {{ points }}
   </div>
   <div
     class="h-min-max w-max-svw xl:w-5/12 py-10 rounded-lg flex items-center justify-center flex-col"
@@ -36,4 +43,5 @@
     </div>
     }
   </div>
+  <app-higscore-btn [game]="'kulki'"></app-higscore-btn>
 </div>

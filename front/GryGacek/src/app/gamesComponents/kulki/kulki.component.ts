@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { coords } from '../../../models/cords';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
+import { HighscoreBtnComponent } from '../../highscore-btn/highscore-btn.component';
+import { SaveScoreComponent } from '../../save-score/save-score.component';
 export interface squere extends coords {
   color: string;
   is_selected: boolean;
@@ -15,7 +17,7 @@ export interface path_node extends coords {
 @Component({
   selector: 'app-kulki',
   standalone: true,
-  imports: [BackToMenuComponent],
+  imports: [BackToMenuComponent, HighscoreBtnComponent, SaveScoreComponent],
   templateUrl: './kulki.component.html',
   styleUrl: './kulki.component.scss',
 })
@@ -61,9 +63,26 @@ export class KulkiComponent {
     'orange',
     'navy',
   ];
+  is_end: boolean = false;
 
   pythagoras(x1: number, y1: number, x2: number, y2: number) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+  reset() {
+    this.selected_squere = {
+      x: 9,
+      y: 9,
+      color: '',
+      is_selected: false,
+      is_path: false,
+    };
+    this.points = 0;
+    this.board = [];
+    this.empty = [];
+    this.is_end = false;
+    clearInterval(this.animation_interval);
+    clearInterval(this.selected_interval);
+    this.ngOnInit();
   }
   ngOnInit() {
     for (let i = 0; i < 9; i++) {
@@ -519,6 +538,6 @@ export class KulkiComponent {
     }
   }
   gameover() {
-    alert('dupa');
+    this.is_end = true;
   }
 }
