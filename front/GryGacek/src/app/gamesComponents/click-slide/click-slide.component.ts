@@ -65,44 +65,44 @@ export class ClickSlideComponent {
   result: string = '';
   ngOnInit() {
     const keyframe1 = `
-   @keyframes change_size_small {
-  0% {
-    width: 80px;
-    height: 80px;
-  }
-
-  100% {
-    width: 112px;
-    height: 112px;
-  }
-}
-  `;
+    @keyframes change_size_small {
+   0% {
+     width: 80px;
+     height: 80px;
+   }
+ 
+   100% {
+     width: 112px;
+     height: 112px;
+   }
+ }
+   `;
     const keyframe2 = `
-@keyframes change_size_normal {
-  0% {
-    width: 128px;
-    height: 128px;
-  }
-
-  100% {
-    width: 160px;
-    height: 160px;
-  }
-}
- `;
+ @keyframes change_size_normal {
+   0% {
+     width: 128px;
+     height: 128px;
+   }
+ 
+   100% {
+     width: 160px;
+     height: 160px;
+   }
+ }
+  `;
     const keyframe3 = `
-@keyframes change_size_big {
-  0% {
-    width: 160px;
-    height: 160px;
-  }
-
-  100% {
-    width: 192px;
-    height: 192px;
-  }
-}
-`;
+ @keyframes change_size_big {
+   0% {
+     width: 160px;
+     height: 160px;
+   }
+ 
+   100% {
+     width: 192px;
+     height: 192px;
+   }
+ }
+ `;
 
     document.styleSheets[0].insertRule(keyframe1);
     document.styleSheets[0].insertRule(keyframe2);
