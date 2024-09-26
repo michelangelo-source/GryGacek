@@ -74,7 +74,7 @@
   </div>
 
   <div class="max-w-full overflow-auto">
-    @for(row of board ;track row;let x_coord=$index){
+    @for(row of board ;track $index;let x_coord=$index){
 
     <div class="flex flex-row">
       @for(cell of row;track cell.id;let y_coord=$index){
