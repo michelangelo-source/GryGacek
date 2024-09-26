@@ -8,12 +8,31 @@
 }
 <div class="w-max-svw h-min-max flex items-center justify-center flex-col">
   <div
-    class="w-5/12 bg-black rounded-lg my-4 flex items-center justify-center text-stone-50"
+    class="w-5/12 bg-black rounded-lg mt-4 flex items-center justify-center text-stone-50"
   >
     Your points: {{ points }}
   </div>
   <div
-    class="h-min-max w-max-svw xl:w-5/12 py-10 rounded-lg flex items-center justify-center flex-col"
+    class="w-5/12 rounded-lg mt-4 mb-2 border-white bg-black flex items-center justify-center text-stone-50"
+  >
+    Next colors:
+  </div>
+  <div id="next" class="flex flex-row">
+    @for(kulka of next_kulki;track $index ){
+
+    <div
+      class="w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 border border-white bg-black flex items-center justify-center"
+    >
+      <img
+        [src]="get_color_path(kulka)"
+        class="w-8 h-8 md:w-12 md:h-12 xl:w-16 xl:h-16"
+      />
+    </div>
+
+    }
+  </div>
+  <div
+    class="h-min-max w-max-svw xl:w-5/12 py-4 rounded-lg flex items-center justify-center flex-col"
   >
     @for (row of board;track row;let rowId=$index ){
     <div class="flex flex-row">
@@ -44,4 +63,14 @@
     }
   </div>
   <app-higscore-btn [game]="'kulki'"></app-higscore-btn>
+  <div id="Rules" class="mb-2 px-10 py-2 bg-rose-950 rounded-xl text-white">
+    <ul class="list-disc">
+      <li>The aim of the game is to score as many points as possible</li>
+      <li>
+        Points are scored by placing five or more balls of the same color in a
+        row, column or diagonally
+      </li>
+      <li>The balls only move up and down or right and left</li>
+    </ul>
+  </div>
 </div>

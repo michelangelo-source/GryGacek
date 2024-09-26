@@ -52,6 +52,7 @@ export class KulkiComponent {
   };
   points = 0;
   board: squere[][] = [];
+  next_kulki: string[] = [];
   empty: coords[] = [];
   colors: string[] = [
     'white',
@@ -102,7 +103,9 @@ export class KulkiComponent {
       }
       this.board.push(row);
     }
-
+    for (let i = 0; i < 3; i++) {
+      this.next_kulki.push(this.colors[Math.floor(Math.random() * 8)]);
+    }
     this.add_balls();
   }
   ngOnDestroy() {
@@ -183,7 +186,7 @@ export class KulkiComponent {
                   }
                 }
                 this.is_animation_on_going = false;
-                this.check();
+                this.check_board_for_points();
               }
             }, 200);
           } else {
@@ -397,7 +400,7 @@ export class KulkiComponent {
       return visited[0];
     }
   }
-  check() {
+  check_board_for_points() {
     let to_clear: squere[] = [];
 
     for (let i = 0; i < 9; i++) {
@@ -528,12 +531,15 @@ export class KulkiComponent {
       this.gameover();
     } else {
       for (let i = 0; i < 3; i++) {
-        let color_index = Math.floor(Math.random() * 8);
         let squere_index = Math.floor(Math.random() * (this.empty.length - 1));
         this.board[this.empty[squere_index].x][
           this.empty[squere_index].y
-        ].color = this.colors[color_index];
+        ].color = this.next_kulki[i];
         this.empty.splice(squere_index, 1);
+      }
+      this.next_kulki = [];
+      for (let i = 0; i < 3; i++) {
+        this.next_kulki.push(this.colors[Math.floor(Math.random() * 8)]);
       }
     }
   }
