@@ -8,49 +8,45 @@
     }
   </div>
   <div>
-    <table id="board" class="">
-      @for (cells of cell_table;track cells;let iid=$index ) { @if(iid%3==0){
-      <tr></tr>
+    <div id="board" class="grid grid-cols-3">
+      @for (cells of cell_table;track cells;let iid=$index ) {
+      <div
+        [classList]="
+          big_cells_results[iid].char == 'none'
+            ? 'grid grid-cols-3 m-1'
+            : 'grid grid-cols-1 m-1'
+        "
+      >
+        @if(big_cells_results[iid].char=='none'){ @for(cell of cells;track
+        $index){ @if(cell.char=="none") {
+        <div
+          [classList]="
+            cell.is_active
+              ? 'w-10 h-10 md:w-12 md:h-12 border-2 border-black bg-lime-300'
+              : 'w-10 h-10 md:w-12 md:h-12 border-2 border-black '
+          "
+          (click)="cell.is_active ? add_chart(iid, $index) : null"
+        ></div>
+
+        } @else {
+        <div
+          class="items-center w-10 h-10 md:w-12 md:h-12 border-2 border-black font-black"
+        >
+          <img [src]="get_picture_path(cell.char)" alt="" />
+        </div>
+
+        } } }@else {
+
+        <div
+          class="w-[120px] h-[120px] md:w-36 md:h-36 flex justify-center items-center border-black font-black"
+        >
+          <img [src]="get_picture_path(big_cells_results[iid].char)" alt="" />
+        </div>
+
+        }
+      </div>
+
       }
-      <td id="{{ iid }}">
-        <table class="">
-          @if(big_cells_results[iid].char=='none'){ @for(cell of cells;track
-          $index){ @if($index%3==0){
-          <tr></tr>
-          }@if(cell.char=="none") {
-
-          <td
-            [classList]="
-              cell.is_active
-                ? 'w-10 h-10 md:w-12 md:h-12 border-2 border-black bg-lime-300'
-                : 'w-10 h-10 md:w-12 md:h-12 border-2 border-black '
-            "
-            (click)="cell.is_active ? add_chart(iid, $index) : null"
-          ></td>
-
-          } @else {
-          <td
-            class="items-center w-10 h-10 md:w-12 md:h-12 border-2 border-black font-black text-3xl"
-          >
-            <img [src]="get_picture_path(cell.char)" alt="" />
-          </td>
-          } }}@else {
-
-          <tr></tr>
-          <td>
-            <div
-              class="w-[120px] h-[120px] md:w-36 md:h-36 flex justify-center items-center border-black font-black text-8xl"
-            >
-              <img
-                [src]="get_picture_path(big_cells_results[iid].char)"
-                alt=""
-              />
-            </div>
-          </td>
-          }
-        </table>
-      </td>
-      }
-    </table>
+    </div>
   </div>
 </div>
