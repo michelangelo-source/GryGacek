@@ -1,12 +1,12 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { rotations } from './tetris.rotations';
 import { starting_positions } from './tetris.startingPositions';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { SaveScoreComponent } from '../../save-score/save-score.component';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { RouterModule } from '@angular/router';
 import { HighscoreBtnComponent } from '../../highscore-btn/highscore-btn.component';
+
 export type cellTetris = {
   color: string;
   occupied: boolean;
@@ -19,7 +19,6 @@ export type cellTetris = {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     SaveScoreComponent,
     BackToMenuComponent,
     HighscoreBtnComponent,
@@ -29,7 +28,8 @@ export type cellTetris = {
   styleUrl: './tetris.component.scss',
 })
 export class TetrisComponent {
-  falling_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
+  next_block_preview_id: number = 0;
+  falling_interval: NodeJS.Timeout | undefined = undefined;
   board: cellTetris[][] = [];
   current_block_id: number = 0;
   current_block_position: number = 0;
@@ -37,6 +37,9 @@ export class TetrisComponent {
   level: number = 1;
   fall_time: number = 1000;
   is_end = false;
+  preview: string[][] = [];
+  hold_block_id = Infinity;
+  hold_block: string[][] = [];
   blue_path: string = '/assets/images/tetris/blue.png';
   green_path: string = '/assets/images/tetris/green.png';
   red_path: string = '/assets/images/tetris/red.png';
@@ -64,6 +67,10 @@ export class TetrisComponent {
     navy: this.navy_path,
     black: this.black_path,
   };
+  @HostListener('window:keyup.c', ['$event'])
+  hold_block_keyup() {
+    this.hold_block_preview();
+  }
 
   @HostListener('window:keyup.arrowleft', ['$event'])
   arrow_left() {
@@ -88,19 +95,48 @@ export class TetrisComponent {
       falling = this.fall();
     }
   }
+
   reset() {
     this.ngOnInit();
   }
   ngOnDestroy() {
-    clearInterval(this.falling_interval);
+    this.stopFalling();
+  }
+  private stopFalling() {
+    if (this.falling_interval) {
+      clearInterval(this.falling_interval);
+      this.falling_interval = undefined;
+    }
+  }
+  private startFalling() {
+    this.stopFalling();
+    this.falling_interval = setInterval(() => this.fall(), this.fall_time);
   }
   ngOnInit() {
+    this.hold_block_id = Infinity;
+    this.next_block_preview_id = 0;
+    this.current_block_id = 0;
+    this.current_block_position = 0;
+    this.fall_time = 1000;
+    this.preview = [];
     clearInterval(this.falling_interval);
     this.board = [];
     this.line_removed = 0;
     this.level = 1;
     this.is_end = false;
     let row: cellTetris[] = [];
+    this.hold_block = [];
+    for (let i = 0; i < 6; i++) {
+      let row: string[] = [];
+      for (let j = 0; j < 8; j++) {
+        if (i == 0 || i == 5 || j == 0 || j == 7) {
+          row.push('black');
+        } else {
+          row.push('white');
+        }
+      }
+      this.hold_block.push(row);
+    }
     for (let i = 0; i < 20; i++) {
       row = [];
       row.push({
@@ -136,7 +172,9 @@ export class TetrisComponent {
       });
     }
     this.board.push(row);
-    this.nextblock();
+    this.next_block_preview_id = Math.floor(Math.random() * 7);
+    this.next_block_preview();
+    this.nextblock(Math.floor(Math.random() * 7));
   }
   get_color_path(color: string) {
     return this.paths[color];
@@ -144,13 +182,75 @@ export class TetrisComponent {
   gameover() {
     this.is_end = true;
   }
+  private next_block_preview() {
+    this.preview = [];
+    for (let i = 0; i < 6; i++) {
+      let row: string[] = [];
+      for (let j = 0; j < 8; j++) {
+        if (i == 0 || i == 5 || j == 0 || j == 7) {
+          row.push('black');
+        } else {
+          row.push('white');
+        }
+      }
+      this.preview.push(row);
+    }
+    for (let i = 0; i < 4; i++) {
+      this.preview[starting_positions[this.next_block_preview_id][i].x][
+        starting_positions[this.next_block_preview_id][i].y - 2
+      ] = this.color[this.next_block_preview_id];
+    }
+  }
+  private hold_block_preview() {
+    for (let i = 19; i >= 0; i--) {
+      for (let j = 1; j <= 10; j++) {
+        if (this.board[i][j].can_fall == true) {
+          this.board[i][j] = {
+            color: 'white',
+            occupied: false,
+            can_fall: false,
+            can_rotate_now: false,
+          };
+        }
+      }
+    }
 
-  nextblock() {
+    this.hold_block = [];
+    for (let i = 0; i < 6; i++) {
+      let row: string[] = [];
+      for (let j = 0; j < 8; j++) {
+        if (i == 0 || i == 5 || j == 0 || j == 7) {
+          row.push('black');
+        } else {
+          row.push('white');
+        }
+      }
+      this.hold_block.push(row);
+    }
+    for (let i = 0; i < 4; i++) {
+      this.hold_block[starting_positions[this.current_block_id][i].x][
+        starting_positions[this.current_block_id][i].y - 2
+      ] = this.color[this.current_block_id];
+    }
+    if (this.hold_block_id == Infinity) {
+      this.hold_block_id = this.current_block_id;
+      this.next_block_preview_id = Math.floor(Math.random() * 7);
+      this.next_block_preview();
+      this.nextblock(this.next_block_preview_id);
+    } else {
+      const old_hold_block_id = this.hold_block_id;
+      this.hold_block_id = this.current_block_id;
+
+      this.nextblock(old_hold_block_id);
+    }
+  }
+
+  nextblock(block_id: number) {
     if (this.board[2][5].color != 'white') {
       this.gameover();
       return;
     }
-    this.current_block_id = Math.floor(Math.random() * 7);
+    this.current_block_id = block_id;
     this.current_block_position = 0;
 
     for (let i = 0; i < 4; i++) {
@@ -164,10 +264,10 @@ export class TetrisComponent {
       };
     }
     this.level = Math.floor(this.line_removed / 10) + 1;
-    this.fall_time = 2000 - 50 * this.level;
-    this.falling_interval = setInterval(() => this.fall(), this.fall_time);
+    this.fall_time = Math.max(100, 2000 - 50 * this.level);
+    this.startFalling();
   }
-  stand() {
+  private stand() {
     this.board.forEach((element) => {
       element.forEach((el) => {
         el.can_fall = false;
@@ -206,17 +306,17 @@ export class TetrisComponent {
 
     return true;
   }
-  move(dircetion: boolean) {
+  move(direction: boolean) {
     let i = 0;
     let step = 0;
-    if (dircetion) {
+    if (direction) {
       step = -1;
     } else {
       step = 1;
     }
 
     for (let j = 0; j < 20; j++) {
-      for (i = dircetion ? 10 : 1; i > 0 && i < 11; i += step) {
+      for (i = direction ? 10 : 1; i > 0 && i < 11; i += step) {
         if (
           this.board[j][i].can_fall == true &&
           this.board[j][i - step].occupied == true &&
@@ -228,7 +328,7 @@ export class TetrisComponent {
     }
 
     for (let j = 0; j < 20; j++) {
-      for (i = dircetion ? 10 : 1; i > 0 && i < 11; i += step) {
+      for (i = direction ? 10 : 1; i > 0 && i < 11; i += step) {
         if (this.board[j][i].can_fall == true) {
           this.board[j][i - step] = this.board[j][i];
           this.board[j][i] = {
@@ -334,8 +434,7 @@ export class TetrisComponent {
       });
     });
   }
-
-  clear() {
+  private clear() {
     let full_line = true;
     this.board.forEach((element, index) => {
       full_line = true;
@@ -348,9 +447,13 @@ export class TetrisComponent {
         this.removing_animation(index);
       }
     });
-    this.nextblock();
+
+    const next_block_id = this.next_block_preview_id;
+    this.next_block_preview_id = Math.floor(Math.random() * 7);
+    this.next_block_preview();
+    this.nextblock(next_block_id);
   }
-  delete(index: number) {
+  private delete(index: number) {
     this.board.splice(index, 1);
     let row = [];
     row.push({
@@ -375,15 +478,19 @@ export class TetrisComponent {
     });
     this.board.unshift(row);
   }
-  removing_animation(removing_line: number) {
+  async removing_animation(removing_line: number) {
     this.line_removed++;
-    this.board[removing_line].forEach((el) => {
-      setTimeout(() => {
-        el.color = 'black';
-      }, 400);
-    });
-    setTimeout(() => {
-      this.delete(removing_line);
-    }, 800);
+    await Promise.all(
+      this.board[removing_line].map((el, index) => {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            el.color = 'black';
+            resolve();
+          }, 50 * index);
+        });
+      })
+    );
+
+    this.delete(removing_line);
   }
 }

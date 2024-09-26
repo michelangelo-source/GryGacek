@@ -7,23 +7,71 @@
     (end)="reset()"
   ></app-save-score>
   }
-  <h1>Linie: {{ line_removed }} Level {{ level }}</h1>
-  @for (row of board;track row;let rowId=$index ){
-
-  <div class="flex flex-row">
-    @for(cell of row;track $index){ @if(rowId>=2){
-    <div class="w-6 h-6 border border-black">
-      @if(cell.color!="white"){
-      <img
-        [src]="get_color_path(cell.color)"
-        width="24"
-        height="24"
-        alt="{{ cell.color }}"
-      />}
-    </div>
-    } }
+  <div
+    class="w-5/12 text-white bg-rose-950 flex items-center justify-center p-2 m-2 rounded-xl"
+  >
+    Linie: {{ line_removed }} Level {{ level }}
   </div>
-  }
+  <div class="flex flex-col md:flex-row-reverse bg-rose-900 p-2 rounded-xl">
+    <div class="flex flex-col text-white items-center justify-center">
+      Next block:
+      <div id="preview" class="m-2">
+        @for (row of preview;track $index ){
+
+        <div class="flex flex-row">
+          @for(color of row;track $index){
+          <div class="w-6 h-6 border border-black bg-white">
+            @if(color!="white"){
+            <img
+              [src]="get_color_path(color)"
+              width="24"
+              height="24"
+              alt="{{ color }}"
+            />}
+          </div>
+          }
+        </div>
+        }
+      </div>
+      Hold (C):
+      <div id="hold" class="m-2">
+        @for (row of hold_block;track $index ){
+
+        <div class="flex flex-row">
+          @for(color of row;track $index){
+          <div class="w-6 h-6 border border-black bg-white">
+            @if(color!="white"){
+            <img
+              [src]="get_color_path(color)"
+              width="24"
+              height="24"
+              alt="{{ color }}"
+            />}
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    <div id="board" class="m-2">
+      @for (row of board;track row;let rowId=$index ){
+
+      <div class="flex flex-row">
+        @for(cell of row;track $index){ @if(rowId>=2){
+        <div class="w-6 h-6 border border-black bg-white">
+          @if(cell.color!="white"){
+          <img
+            [src]="get_color_path(cell.color)"
+            width="24"
+            height="24"
+            alt="{{ cell.color }}"
+          />}
+        </div>
+        } }
+      </div>
+      }
+    </div>
+  </div>
   <div class="flex flex-row">
     <div class="mx-5">
       <div class="lg:hidden w-24 h-10 rounded-lg"></div>
@@ -36,7 +84,12 @@
     </div>
     <div class="mx-5">
       <div class="flex flex-row">
-        <div class="lg:hidden w-10 h-10 rounded-lg"></div>
+        <div
+          class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
+          (click)="hold_block_keyup()"
+        >
+          C
+        </div>
         <div
           class="lg:hidden w-10 h-10 rounded-lg border border-black font-bold flex justify-center items-center"
           (click)="arrow_up()"
