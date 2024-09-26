@@ -85,7 +85,9 @@
             : 'min-w-8 max-w-8 h-8 border  border-black bg-rose-900  text-white flex justify-center items-center'
         "
         (click)="
-          cell.is_coverd
+          is_game_over
+            ? null
+            : cell.is_coverd
             ? flagmode_active
               ? flag($event, x_coord, y_coord)
               : cell.is_flag

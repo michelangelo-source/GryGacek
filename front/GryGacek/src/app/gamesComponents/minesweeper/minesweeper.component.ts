@@ -38,6 +38,7 @@ export class MinesweeperComponent {
   milisec = 0;
   time_interval: NodeJS.Timeout = setTimeout(() => {}, 0);
   firstwin = true;
+  is_game_over = false;
   flagmode_active = false;
   modes = Minesweeper_modes;
   col = 8;
@@ -107,6 +108,7 @@ export class MinesweeperComponent {
     this.board[x][y].is_flag = !this.board[x][y].is_flag;
   }
   restart() {
+    this.is_game_over = false;
     this.is_end = false;
     this.is_first_click = true;
     this.create_board(this.col, this.row, this.bomb, -999, -999);
@@ -271,9 +273,6 @@ export class MinesweeperComponent {
         }
       });
     });
-    setTimeout(() => {
-      alert('dupa');
-      this.restart();
-    }, 200);
+    this.is_game_over = true;
   }
 }
