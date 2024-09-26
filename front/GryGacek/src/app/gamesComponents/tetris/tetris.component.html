@@ -8,6 +8,16 @@
   ></app-save-score>
   }
   <div
+    [classList]="
+      !start
+        ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-950 text-white p-2 rounded-xl hover:bg-red-800 w-80 flex justify-center items-center '
+        : 'hidden '
+    "
+    (click)="play()"
+  >
+    PLAY
+  </div>
+  <div
     class="w-5/12 text-white bg-rose-950 flex items-center justify-center p-2 m-2 rounded-xl"
   >
     Linie: {{ line_removed }} Level {{ level }}

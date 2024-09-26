@@ -39,6 +39,7 @@ export class TetrisComponent {
   is_end = false;
   preview: string[][] = [];
   hold_block_id = Infinity;
+  start = false;
   hold_block: string[][] = [];
   blue_path: string = '/assets/images/tetris/blue.png';
   green_path: string = '/assets/images/tetris/green.png';
@@ -97,6 +98,7 @@ export class TetrisComponent {
   }
 
   reset() {
+    this.start = false;
     this.ngOnInit();
   }
   ngOnDestroy() {
@@ -159,7 +161,6 @@ export class TetrisComponent {
         can_fall: false,
         can_rotate_now: false,
       });
-
       this.board.push(row);
     }
     row = [];
@@ -174,7 +175,7 @@ export class TetrisComponent {
     this.board.push(row);
     this.next_block_preview_id = Math.floor(Math.random() * 7);
     this.next_block_preview();
-    this.nextblock(Math.floor(Math.random() * 7));
+    this.start = false;
   }
   get_color_path(color: string) {
     return this.paths[color];
@@ -244,7 +245,10 @@ export class TetrisComponent {
       this.nextblock(old_hold_block_id);
     }
   }
-
+  play() {
+    this.start = true;
+    this.nextblock(Math.floor(Math.random() * 7));
+  }
   nextblock(block_id: number) {
     if (this.board[2][5].color != 'white') {
       this.gameover();
@@ -252,7 +256,6 @@ export class TetrisComponent {
     }
     this.current_block_id = block_id;
     this.current_block_position = 0;
-
     for (let i = 0; i < 4; i++) {
       this.board[starting_positions[this.current_block_id][i].x][
         starting_positions[this.current_block_id][i].y
@@ -289,7 +292,6 @@ export class TetrisComponent {
         }
       }
     }
-
     for (let i = 19; i >= 0; i--) {
       for (let j = 1; j <= 10; j++) {
         if (this.board[i][j].can_fall == true) {
@@ -303,7 +305,6 @@ export class TetrisComponent {
         }
       }
     }
-
     return true;
   }
   move(direction: boolean) {
