@@ -52,66 +52,70 @@
   }
 
   <table class="text-white m-2">
-    <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
-      <th
-        class="w-4 md:w-6 h-12 rounded-xl flex items-center justify-center mx-1"
-      ></th>
-      <th
-        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        nickname
-      </th>
-      @if(modes.length>0){
+    <thead>
+      <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
+        <th
+          class="w-4 md:w-6 h-12 rounded-xl flex items-center justify-center mx-1"
+        ></th>
+        <th
+          class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1 font-bold"
+        >
+          nickname
+        </th>
+        @if(modes.length>0){
 
-      <td
-        class="w-16 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        Mode
-      </td>
+        <td
+          class="w-16 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1 font-bold"
+        >
+          Mode
+        </td>
+        }
+        <th
+          class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1 font-bold"
+        >
+          Score
+        </th>
+
+        <td
+          class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1 font-bold"
+        >
+          Date
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      @for (score of scores; track $index) {
+      <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
+        <td
+          class="w-4 md:w-6 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+        >
+          {{ $index + 1 }}.
+        </td>
+        <td
+          class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+        >
+          {{ score.nickname }}
+        </td>
+        @if(score.gameMode!=undefined){
+        <td
+          class="w-16 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+        >
+          {{ score.gameMode }}
+        </td>
+        }
+        <td
+          class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+        >
+          {{ score.result }}
+        </td>
+
+        <td
+          class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
+        >
+          {{ score.date }}
+        </td>
+      </tr>
       }
-      <th
-        class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        Score
-      </th>
-
-      <td
-        class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        Date
-      </td>
-    </tr>
-    @for (score of scores; track $index) {
-    <tr class="py-1 flex flex-row bg-rose-900 rounded-xl">
-      <td
-        class="w-4 md:w-6 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        {{ $index + 1 }}.
-      </td>
-      <td
-        class="w-20 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        {{ score.nickname }}
-      </td>
-      @if(score.gameMode!=undefined){
-      <td
-        class="w-16 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        {{ score.gameMode }}
-      </td>
-      }
-      <td
-        class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        {{ score.result }}
-      </td>
-
-      <td
-        class="w-24 md:w-36 h-12 bg-rose-950 rounded-xl flex items-center justify-center mx-1"
-      >
-        {{ score.date }}
-      </td>
-    </tr>
-    }
+    </tbody>
   </table>
 </div>
