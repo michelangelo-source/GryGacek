@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { afterNextRender, afterRender, Component, inject } from '@angular/core';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
+import { ActivatedRoute } from '@angular/router';
+import { StttSocketService } from './sttt.service';
 export type stttCell = {
   big_cell_id: number;
   small_cell_id: number;
@@ -23,11 +25,56 @@ export class StttComponent {
     circle: this.circle_path,
     tie: this.draw_path,
   };
+  mode: string = 'Local';
+  role: string = '';
+  player_nickname: string = '';
+  room_id: string = '';
+  opponent_move_big_table: number = -1;
+  opponent_move_small_table: number = -1;
+  route: ActivatedRoute = inject(ActivatedRoute);
   cell_table: stttCell[][] = [];
   who_moves: boolean = true;
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
+  constructor(private stttSocketService: StttSocketService) {}
+  ngOnDestroy() {}
   ngOnInit() {
+    this.mode = this.route.snapshot.params['mode'];
+    this.role = this.route.snapshot.params['role'];
+    this.player_nickname = this.route.snapshot.params['player'];
+    this.room_id = this.route.snapshot.params['room'];
+    if (this.mode === 'Online') {
+      this.stttSocketService.connect();
+
+      setTimeout(() => {
+        if (this.role === 'admin') {
+          this.stttSocketService.createRoom().subscribe((res) => {
+            this.room_id = res;
+            console.log('Room created:', this.room_id);
+            this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
+            this.stttSocketService.subscribeToRoom((res) => {
+              console.log(res);
+              this.add_chart(res.bigTableId, res.smallTableId);
+            });
+          });
+        } else {
+          this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
+          this.stttSocketService.subscribeToRoom((res) => {
+            console.log(res);
+            this.add_chart(res.bigTableId, res.smallTableId);
+          });
+        }
+        //this.stttSocketService.testConnection();
+      }, 6000);
+
+      // if (this.role === 'admin') {
+      //   this.stttSocketService.createRoom().subscribe((res) => {
+      //     this.room_id = res;
+      //     console.log('Room created:', this.room_id);
+      //     this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
+      //   });
+      // }
+    }
     for (let i = 0; i < 9; i++) {
       this.big_cells_results.push({
         big_cell_id: i,
@@ -46,6 +93,10 @@ export class StttComponent {
       }
       this.cell_table.push(tmp_cell_table);
     }
+  }
+  sendMove(bigId: number, smalId: number) {
+    console.log('dupa');
+    this.stttSocketService.sendNumbers(bigId, smalId);
   }
   get_picture_path(result: string) {
     return this.path[result];
@@ -92,6 +143,7 @@ export class StttComponent {
   }
 
   add_chart(iid: number, jid: number) {
+    console.log('dupa2');
     //zmiana ruchu i znakow
     this.who_moves = !this.who_moves;
     if (this.who_moves) {
@@ -154,7 +206,6 @@ export class StttComponent {
       let big_result = this.check(this.big_cells_results);
       if (big_result != 'none') {
         alert(big_result + ' wins');
-        window.location.reload();
       }
     }
     if (
@@ -164,7 +215,6 @@ export class StttComponent {
       9
     ) {
       alert('remis');
-      window.location.reload();
     }
   }
 }

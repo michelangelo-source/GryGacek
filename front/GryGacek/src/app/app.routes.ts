@@ -6,6 +6,8 @@ import { KulkiComponent } from './gamesComponents/kulki/kulki.component';
 import { MinesweeperComponent } from './gamesComponents/minesweeper/minesweeper.component';
 import { HighscoresComponent } from './highscores/highscores.component';
 import { MenuComponent } from './menu/menu.component';
+import { StttMenuComponent } from './gamesComponents/sttt/sttt-menu/sttt-menu.component';
+import { StttOnlineConfigComponent } from './gamesComponents/sttt/sttt-online-config/sttt-online-config.component';
 export const routes: Routes = [
   {
     path: '',
@@ -18,9 +20,29 @@ export const routes: Routes = [
     title: 'Minesweeper',
   },
   {
-    path: 'sttt',
+    path: 'sttt/:mode',
     component: StttComponent,
     title: 'Super Tic-tac-toe',
+  },
+  {
+    path: 'sttt/:mode/:role/:player',
+    component: StttComponent,
+    title: 'Super Tic-tac-toe',
+  },
+  {
+    path: 'sttt/:mode/:role/:player/:room',
+    component: StttComponent,
+    title: 'Super Tic-tac-toe',
+  },
+  {
+    path: 'sttt_menu',
+    component: StttMenuComponent,
+    title: 'Super Tic-tac-toe Menu',
+  },
+  {
+    path: 'sttt_online',
+    component: StttOnlineConfigComponent,
+    title: 'Super Tic-tac-toe Online',
   },
   {
     path: 'tetris',

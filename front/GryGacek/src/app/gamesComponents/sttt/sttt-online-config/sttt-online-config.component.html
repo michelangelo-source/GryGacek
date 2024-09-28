@@ -1,0 +1,52 @@
+<app-back-to-menu></app-back-to-menu>
+<div
+  class="flex flex-col justify-center items-center h-1/2 w-dvw xl:w-2/5 lg:w-2/5 md:w-3/5 sm:w-4/5 bg-rose-900 text-white rounded-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+>
+  <div class="bg-rose-950 p-2 rounded-xl">Insert nickname:</div>
+  <input
+    class="my-4 flex items-center justify-center bg-rose-950 text-white rounded-xl w-36 sm:w-36 md:w-40 xl:w-48 h-10"
+    [(ngModel)]="player_nickname"
+    [maxlength]="'6'"
+    name="col_number"
+    type="text"
+    placeholder="Nickname"
+  />
+
+  <a
+    [routerLink]="
+      player_nickname.length > 0
+        ? ['/sttt', 'Online', 'admin', player_nickname]
+        : null
+    "
+    class="my-4 flex items-center justify-center bg-rose-950 hover:bg-red-800 text-white rounded-xl w-72 sm:w-72 md:w-80 xl:w-96 h-20"
+  >
+    Create room
+  </a>
+  <div
+    (click)="joining_room()"
+    class="my-4 flex items-center justify-center bg-rose-950 hover:bg-red-800 text-white rounded-xl w-72 sm:w-72 md:w-80 xl:w-96 h-20"
+  >
+    Join room
+  </div>
+  @if (is_joining) {
+  <div class="flex flex-row">
+    <input
+      class="my-4 flex items-center justify-center bg-rose-950 text-white rounded-xl w-36 sm:w-36 md:w-40 xl:w-48 h-10 m-2"
+      [(ngModel)]="roomId"
+      [maxlength]="'8'"
+      name="col_number"
+      type="text"
+      placeholder="Room id"
+    />
+    <a
+      [routerLink]="
+        player_nickname.length > 0 && roomId.length > 0
+          ? ['/sttt', 'Online', 'guest', player_nickname, roomId]
+          : null
+      "
+      class="my-4 flex items-center justify-center bg-rose-950 hover:bg-red-800 text-white rounded-xl w-36 sm:w-36 md:w-40 xl:w-48 h-10 m-2"
+      >Join</a
+    >
+  </div>
+  }
+</div>

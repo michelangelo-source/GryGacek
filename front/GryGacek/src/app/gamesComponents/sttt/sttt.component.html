@@ -7,6 +7,11 @@
     <h1 class="text-4xl">cross moves</h1>
     }
   </div>
+  @if (mode == 'Online') {
+  <div class="bg-rose-950 text-white rounded-xl p-2 m-2 text-xl">
+    Room id: {{ room_id }}
+  </div>
+  }
   <div>
     <div id="board" class="grid grid-cols-3">
       @for (cells of cell_table;track cells;let iid=$index ) {
@@ -25,7 +30,13 @@
               ? 'w-10 h-10 md:w-12 md:h-12 border-2 border-black bg-lime-300'
               : 'w-10 h-10 md:w-12 md:h-12 border-2 border-black '
           "
-          (click)="cell.is_active ? add_chart(iid, $index) : null"
+          (click)="
+            cell.is_active
+              ? mode == 'Online'
+                ? sendMove(iid, $index)
+                : add_chart(iid, $index)
+              : null
+          "
         ></div>
 
         } @else {
