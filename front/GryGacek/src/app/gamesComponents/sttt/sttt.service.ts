@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class StttSocketService {
   private stompClient: Client = new Client();
-  private isConnected = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
+  public isConnected = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
   private roomId: string = ''; // Przechowuje aktualne ID pokoju
   private userId: string = ''; // Przechowuje aktualne ID użytkownika
   private http = inject(HttpClient);
@@ -23,7 +23,7 @@ export class StttSocketService {
     }
   }
   // Połączenie z serwerem WebSocket
-  async connect() {
+  connect() {
     const socket = new SockJS(backend_URL + ':' + backend_PORT + '/ws'); // Punkt końcowy WebSocket na serwerze
 
     // Inicjalizacja klienta STOMP

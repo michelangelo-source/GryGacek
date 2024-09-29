@@ -2,7 +2,6 @@ package grygacek.grygacekbackend.games.supertictactoe;
 
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -26,7 +25,6 @@ public class StttRoomController {
 
     @MessageMapping("/joinRoom")
     public String joinRoom(JoinRoomRequest request, SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("doszlo");
         String roomId = request.getRoomId();
         String userId = request.getUserId();
 
@@ -52,7 +50,6 @@ public class StttRoomController {
 
     @MessageMapping("/sendIds")
     public void sendNumbers(StttRoom stttRoom) {
-        System.out.println("doszloIDDDDD");
         String stttRoomId = stttRoom.getRoomId();
         messagingTemplate.convertAndSend("/moves/" + stttRoomId, stttRoom);
     }

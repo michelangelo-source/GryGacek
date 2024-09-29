@@ -43,10 +43,11 @@ export class StttComponent {
     this.role = this.route.snapshot.params['role'];
     this.player_nickname = this.route.snapshot.params['player'];
     this.room_id = this.route.snapshot.params['room'];
-    if (this.mode === 'Online') {
-      this.stttSocketService.connect();
+    this.stttSocketService.isConnected.subscribe((connected) => {
+      if (connected) {
+        console.log('Connection established');
 
-      setTimeout(() => {
+        // Logika po nawiązaniu połączenia
         if (this.role === 'admin') {
           this.stttSocketService.createRoom().subscribe((res) => {
             this.room_id = res;
@@ -64,17 +65,9 @@ export class StttComponent {
             this.add_chart(res.bigTableId, res.smallTableId);
           });
         }
-        //this.stttSocketService.testConnection();
-      }, 6000);
-
-      // if (this.role === 'admin') {
-      //   this.stttSocketService.createRoom().subscribe((res) => {
-      //     this.room_id = res;
-      //     console.log('Room created:', this.room_id);
-      //     this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
-      //   });
-      // }
-    }
+      }
+    });
+    this.stttSocketService.connect();
     for (let i = 0; i < 9; i++) {
       this.big_cells_results.push({
         big_cell_id: i,
