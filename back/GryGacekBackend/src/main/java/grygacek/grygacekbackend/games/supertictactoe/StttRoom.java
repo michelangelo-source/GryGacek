@@ -12,7 +12,7 @@ public class StttRoom {
     private String roomId;
     private int bigTableId;
     private int smallTableId;
-
+    private String userName;
     public StttRoom(String roomId) {
     }
 }

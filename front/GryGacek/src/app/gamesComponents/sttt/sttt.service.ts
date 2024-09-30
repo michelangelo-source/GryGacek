@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Client } from '@stomp/stompjs'; // Używamy bezpośrednio Client
+import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { backend_PORT } from '../../../properties';
@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class StttSocketService {
   private stompClient: Client = new Client();
-  public isConnected = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
+  private isConnected = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
   private roomId: string = ''; // Przechowuje aktualne ID pokoju
   private userId: string = ''; // Przechowuje aktualne ID użytkownika
   private http = inject(HttpClient);
@@ -21,6 +21,9 @@ export class StttSocketService {
     } else {
       console.error('No active connection.');
     }
+  }
+  getisConnected() {
+    return this.isConnected;
   }
   // Połączenie z serwerem WebSocket
   connect() {
@@ -105,6 +108,7 @@ export class StttSocketService {
       roomId: this.roomId,
       bigTableId: number1,
       smallTableId: number2,
+      userName: this.userId,
     };
     this.stompClient.publish({
       destination: '/sttt/sendIds',

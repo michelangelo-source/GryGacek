@@ -51,7 +51,14 @@ public class StttRoomController {
     @MessageMapping("/sendIds")
     public void sendNumbers(StttRoom stttRoom) {
         String stttRoomId = stttRoom.getRoomId();
-        messagingTemplate.convertAndSend("/moves/" + stttRoomId, stttRoom);
+        try {
+            stttRoom = stttRoomService.changeUserName(stttRoom);
+            System.out.println("here");
+            messagingTemplate.convertAndSend("/moves/" + stttRoomId, stttRoom);
+        }catch (Exception e){
+            messagingTemplate.convertAndSend("/moves/" + stttRoomId, e);
+        }
+
     }
 
     @MessageMapping("/leaveRoom")

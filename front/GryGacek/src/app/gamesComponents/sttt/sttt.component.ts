@@ -33,41 +33,18 @@ export class StttComponent {
   opponent_move_small_table: number = -1;
   route: ActivatedRoute = inject(ActivatedRoute);
   cell_table: stttCell[][] = [];
-  who_moves: boolean = true;
+  who_moves: string = 'circle';
+  player_who_moves: string = '';
+  player_chart: string = '';
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
   constructor(private stttSocketService: StttSocketService) {}
   ngOnDestroy() {}
   ngOnInit() {
     this.mode = this.route.snapshot.params['mode'];
-    this.role = this.route.snapshot.params['role'];
-    this.player_nickname = this.route.snapshot.params['player'];
-    this.room_id = this.route.snapshot.params['room'];
-    this.stttSocketService.isConnected.subscribe((connected) => {
-      if (connected) {
-        console.log('Connection established');
-
-        // Logika po nawiązaniu połączenia
-        if (this.role === 'admin') {
-          this.stttSocketService.createRoom().subscribe((res) => {
-            this.room_id = res;
-            console.log('Room created:', this.room_id);
-            this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
-            this.stttSocketService.subscribeToRoom((res) => {
-              console.log(res);
-              this.add_chart(res.bigTableId, res.smallTableId);
-            });
-          });
-        } else {
-          this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
-          this.stttSocketService.subscribeToRoom((res) => {
-            console.log(res);
-            this.add_chart(res.bigTableId, res.smallTableId);
-          });
-        }
-      }
-    });
-    this.stttSocketService.connect();
+    if (this.mode == 'Online') {
+      this.onlineConfig();
+    }
     for (let i = 0; i < 9; i++) {
       this.big_cells_results.push({
         big_cell_id: i,
@@ -87,8 +64,39 @@ export class StttComponent {
       this.cell_table.push(tmp_cell_table);
     }
   }
+
+  onlineConfig() {
+    this.role = this.route.snapshot.params['role'];
+    this.player_nickname = this.route.snapshot.params['player'];
+    this.room_id = this.route.snapshot.params['room'];
+    this.stttSocketService.getisConnected().subscribe((connected) => {
+      if (connected) {
+        if (this.role === 'admin') {
+          this.player_chart = 'circle';
+          this.stttSocketService.createRoom().subscribe((res) => {
+            this.room_id = res;
+            this.onlineGame();
+          });
+        } else {
+          this.player_chart = 'cross';
+          this.onlineGame();
+        }
+      }
+    });
+    this.stttSocketService.connect();
+  }
+  onlineGame() {
+    this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
+    this.stttSocketService.subscribeToRoom((res) => {
+      if (res.message) {
+        console.log(res.message);
+      } else {
+        this.player_who_moves = res.userName;
+        this.add_chart(res.bigTableId, res.smallTableId);
+      }
+    });
+  }
   sendMove(bigId: number, smalId: number) {
-    console.log('dupa');
     this.stttSocketService.sendNumbers(bigId, smalId);
   }
   get_picture_path(result: string) {
@@ -136,12 +144,14 @@ export class StttComponent {
   }
 
   add_chart(iid: number, jid: number) {
-    console.log('dupa2');
+    console.log(this.who_moves);
     //zmiana ruchu i znakow
-    this.who_moves = !this.who_moves;
-    if (this.who_moves) {
+
+    if (this.who_moves == 'cross') {
+      this.who_moves = 'circle';
       this.cell_table[iid][jid].char = 'cross';
     } else {
+      this.who_moves = 'cross';
       this.cell_table[iid][jid].char = 'circle';
     }
     // sprawdzanie malych wygranych

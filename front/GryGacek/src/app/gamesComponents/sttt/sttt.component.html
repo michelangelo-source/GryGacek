@@ -1,7 +1,8 @@
 <app-back-to-menu></app-back-to-menu>
 <div class="w-svh h-svh flex items-center flex-col">
   <div class="h-1/6 flex justify-center items-center">
-    @if(who_moves){
+    @if(mode=="Online"){
+    {{ player_who_moves }}} @if(who_moves=='circle'){
     <h1 class="text-4xl">circle moves</h1>
     }@else {
     <h1 class="text-4xl">cross moves</h1>
@@ -33,7 +34,9 @@
           (click)="
             cell.is_active
               ? mode == 'Online'
-                ? sendMove(iid, $index)
+                ? player_chart == who_moves
+                  ? sendMove(iid, $index)
+                  : null
                 : add_chart(iid, $index)
               : null
           "

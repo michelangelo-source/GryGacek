@@ -46,4 +46,19 @@ public class StttRoomService {
             }
         }
     }
+
+    public StttRoom changeUserName(StttRoom stttRoom) {
+        String anotherUserName;
+        List<String> users=stttRooms.get(stttRoom.getRoomId());
+        if(users.size()<2){
+            throw new RuntimeException("Wait for another player to join");
+        }
+        if(Objects.equals(stttRoom.getUserName(), users.getFirst())){
+            anotherUserName=users.get(1);
+        }else{
+            anotherUserName=users.getFirst();
+        }
+        stttRoom.setUserName(anotherUserName);
+        return stttRoom;
+    }
 }
