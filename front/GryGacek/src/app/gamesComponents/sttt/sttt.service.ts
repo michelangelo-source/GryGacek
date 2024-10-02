@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Client } from '@stomp/stompjs';
+import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { backend_PORT } from '../../../properties';
@@ -14,6 +14,7 @@ export class StttSocketService {
   private roomId: string = ''; // Przechowuje aktualne ID pokoju
   private userId: string = ''; // Przechowuje aktualne ID użytkownika
   private http = inject(HttpClient);
+  private subscription!: StompSubscription;
   constructor() {}
   testConnection() {
     if (this.isConnected.value) {
@@ -33,7 +34,7 @@ export class StttSocketService {
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000, // Automatyczne ponowne połączenie po 5 sekundach
-      debug: (str) => console.log(str), // Możesz to wyłączyć po debugowaniu
+      // debug: (str) => console.log(str), // Możesz to wyłączyć po debugowaniu
     });
 
     // Zarejestruj funkcje obsługi po połączeniu
@@ -81,7 +82,7 @@ export class StttSocketService {
   // Opuść pokój
   leaveRoom() {
     if (!this.roomId || !this.userId) {
-      // console.error('No room or user ID specified.');
+      console.error('No room or user ID specified.');
       return;
     }
 
@@ -97,8 +98,6 @@ export class StttSocketService {
 
   // Wysyłanie liczb (liczba1 i liczba2) do pokoju
   sendNumbers(number1: number, number2: number) {
-    console.log(this.userId);
-    console.log(this.roomId);
     if (!this.roomId || !this.userId) {
       console.error('No room or user ID specified.');
       return;
@@ -117,17 +116,23 @@ export class StttSocketService {
   }
 
   // Subskrypcja na wiadomości dotyczące pokoju (np. status pokoju, odbieranie liczb)
-  subscribeToRoom(callback: (message: any) => void) {
-    if (!this.roomId) {
-      console.error('No room ID specified.');
-      return;
-    }
-
-    this.stompClient.subscribe(`/moves/${this.roomId}`, (message) => {
-      callback(JSON.parse(message.body)); // Odbieranie wiadomości i wywołanie callbacka
-    });
+  subscribeToRoom(
+    roomId: string,
+    userId: string,
+    callback: (message: any) => void
+  ) {
+    this.roomId = roomId;
+    this.userId = userId;
+    this.subscription = this.stompClient.subscribe(
+      `/moves/${this.roomId}`,
+      (message) => {
+        callback(JSON.parse(message.body)); // Odbieranie wiadomości i wywołanie callbacka
+      }
+    );
   }
-
+  dissconect() {
+    this.subscription.unsubscribe();
+  }
   // Status połączenia WebSocket
   isConnected$() {
     return this.isConnected.asObservable(); // Observable dla statusu połączenia

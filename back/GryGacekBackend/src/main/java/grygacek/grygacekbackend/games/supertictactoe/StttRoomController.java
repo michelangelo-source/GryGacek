@@ -24,28 +24,21 @@ public class StttRoomController {
     }
 
     @MessageMapping("/joinRoom")
-    public String joinRoom(JoinRoomRequest request, SimpMessageHeaderAccessor headerAccessor) {
+    public void joinRoom(JoinRoomRequest request) {
         String roomId = request.getRoomId();
         String userId = request.getUserId();
-
         if (!stttRoomService.stttRoomExists(roomId)) {
-            return "Room not found";
+            messagingTemplate.convertAndSend("/moves/" + roomId, new JoinRoomResponse("Room not found", false,userId));
+            return;
         }
-
         int userCount = stttRoomService.getUserCountInRoom(roomId);
-
         if (userCount >= 2) {
-            return "Room is full";
+            messagingTemplate.convertAndSend("/moves/" + roomId, new JoinRoomResponse("Room is full", false,userId));
+            return;
         }
+        stttRoomService.addUserToRoom(roomId,userId);
 
-        boolean added = stttRoomService.addUserToRoom(roomId, userId);
-
-        if (added) {
-            headerAccessor.getSessionAttributes().put("roomId", roomId);
-            return "User " + userId + " joined room " + roomId;
-        } else {
-            return "Room is full";
-        }
+        messagingTemplate.convertAndSend("/moves/" + roomId, new JoinRoomResponse("User " + userId + " joined room: " + roomId, true,stttRoomService.getRoomAdmin(roomId)));
     }
 
     @MessageMapping("/sendIds")
@@ -53,10 +46,9 @@ public class StttRoomController {
         String stttRoomId = stttRoom.getRoomId();
         try {
             stttRoom = stttRoomService.changeUserName(stttRoom);
-            System.out.println("here");
             messagingTemplate.convertAndSend("/moves/" + stttRoomId, stttRoom);
-        }catch (Exception e){
-            messagingTemplate.convertAndSend("/moves/" + stttRoomId, e);
+        } catch (Exception e) {
+            messagingTemplate.convertAndSend("/moves/" + stttRoomId,new ExceptionDTO(e.getMessage()));
         }
 
     }
@@ -68,6 +60,6 @@ public class StttRoomController {
 
         stttRoomService.removeUserFromRoom(stttRoomId, userId);
 
-        messagingTemplate.convertAndSend("/moves/"+stttRoomId, "User " + userId + " left room " + stttRoomId);
+        messagingTemplate.convertAndSend("/moves/" + stttRoomId, new ExceptionDTO("User " + userId + " left room " + stttRoomId));
     }
 }

@@ -61,4 +61,8 @@ public class StttRoomService {
         stttRoom.setUserName(anotherUserName);
         return stttRoom;
     }
+
+    public String getRoomAdmin(String roomId) {
+        return stttRooms.get(roomId).getFirst();
+    }
 }

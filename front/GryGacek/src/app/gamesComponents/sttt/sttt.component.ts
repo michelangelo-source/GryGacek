@@ -25,6 +25,7 @@ export class StttComponent {
     circle: this.circle_path,
     tie: this.draw_path,
   };
+  joining_room_status: string = 'Not connected';
   mode: string = 'Local';
   role: string = '';
   player_nickname: string = '';
@@ -35,11 +36,14 @@ export class StttComponent {
   cell_table: stttCell[][] = [];
   who_moves: string = 'circle';
   player_who_moves: string = '';
-  player_chart: string = '';
+  player_char: string = '';
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
+  fail_message!: string;
   constructor(private stttSocketService: StttSocketService) {}
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.stttSocketService.leaveRoom();
+  }
   ngOnInit() {
     this.mode = this.route.snapshot.params['mode'];
     if (this.mode == 'Online') {
@@ -72,13 +76,14 @@ export class StttComponent {
     this.stttSocketService.getisConnected().subscribe((connected) => {
       if (connected) {
         if (this.role === 'admin') {
-          this.player_chart = 'circle';
+          this.player_who_moves = this.player_nickname;
+          this.player_char = 'circle';
           this.stttSocketService.createRoom().subscribe((res) => {
             this.room_id = res;
             this.onlineGame();
           });
         } else {
-          this.player_chart = 'cross';
+          this.player_char = 'cross';
           this.onlineGame();
         }
       }
@@ -86,18 +91,38 @@ export class StttComponent {
     this.stttSocketService.connect();
   }
   onlineGame() {
-    this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
-    this.stttSocketService.subscribeToRoom((res) => {
-      if (res.message) {
-        console.log(res.message);
-      } else {
-        this.player_who_moves = res.userName;
-        this.add_chart(res.bigTableId, res.smallTableId);
+    this.stttSocketService.subscribeToRoom(
+      this.room_id,
+      this.player_nickname,
+      (res) => {
+        if (res.message) {
+          console.log(res);
+          console.log(res.message);
+          if (res.joined) {
+            this.joining_room_status = 'connected';
+            this.player_who_moves = res.userWhoMoves;
+          } else if (
+            res.joined === false &&
+            this.player_nickname === res.userWhoMoves
+          ) {
+            this.stttSocketService.dissconect();
+            this.joining_room_status = 'failed';
+            this.who_moves = 'nobody';
+            this.fail_message = res.message;
+          }
+        } else {
+          this.player_who_moves = res.userName;
+          this.add_char(res.bigTableId, res.smallTableId);
+        }
       }
-    });
+    );
+    this.joining_room_status = 'conectting...';
+    this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
   }
   sendMove(bigId: number, smalId: number) {
-    this.stttSocketService.sendNumbers(bigId, smalId);
+    this.joining_room_status === 'connected'
+      ? this.stttSocketService.sendNumbers(bigId, smalId)
+      : null;
   }
   get_picture_path(result: string) {
     return this.path[result];
@@ -143,7 +168,7 @@ export class StttComponent {
     return 'none';
   }
 
-  add_chart(iid: number, jid: number) {
+  add_char(iid: number, jid: number) {
     console.log(this.who_moves);
     //zmiana ruchu i znakow
 

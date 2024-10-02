@@ -2,11 +2,12 @@
 <div class="w-svh h-svh flex items-center flex-col">
   <div class="h-1/6 flex justify-center items-center">
     @if(mode=="Online"){
-    {{ player_who_moves }}} @if(who_moves=='circle'){
+    <h1 class="text-4xl">{{ player_who_moves }}: moves</h1>
+    } @else{ @if(who_moves=='circle'){
     <h1 class="text-4xl">circle moves</h1>
     }@else {
     <h1 class="text-4xl">cross moves</h1>
-    }
+    }}
   </div>
   @if (mode == 'Online') {
   <div class="bg-rose-950 text-white rounded-xl p-2 m-2 text-xl">
@@ -34,10 +35,10 @@
           (click)="
             cell.is_active
               ? mode == 'Online'
-                ? player_chart == who_moves
+                ? player_char == who_moves
                   ? sendMove(iid, $index)
                   : null
-                : add_chart(iid, $index)
+                : add_char(iid, $index)
               : null
           "
         ></div>
