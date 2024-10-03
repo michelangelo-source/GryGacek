@@ -20,16 +20,6 @@ export const routes: Routes = [
     title: 'Minesweeper',
   },
   {
-    path: 'sttt/:mode',
-    component: StttComponent,
-    title: 'Super Tic-tac-toe',
-  },
-  {
-    path: 'sttt/:mode/:role/:player',
-    component: StttComponent,
-    title: 'Super Tic-tac-toe',
-  },
-  {
     path: 'sttt/:mode/:role/:player/:room',
     component: StttComponent,
     title: 'Super Tic-tac-toe',

@@ -1,19 +1,43 @@
 <app-back-to-menu></app-back-to-menu>
 <div class="w-svh h-svh flex items-center flex-col">
-  <div class="h-1/6 flex justify-center items-center">
+  @if(is_end){
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-900 text-white p-2 rounded-xl flex justify-center items-center"
+  >
+    <div class="p-2 bg-rose-950 rounded-xl text-4xl">
+      {{ result }}
+    </div>
+  </div>
+  }
+
+  <div class="h-1/6 flex flex-col justify-center items-center">
     @if(mode=="Online"){
-    <h1 class="text-4xl">{{ player_who_moves }}: moves</h1>
-    } @else{ @if(who_moves=='circle'){
+    <h1 class="text-4xl">{{ player_who_moves }} moves</h1>
+    <div class="bg-rose-950 text-white rounded-xl p-2 m-2 text-xl">
+      Room id: {{ room_id }}
+    </div>
+    @if(message!==''){
+
+    <div
+      id="disappear"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-900 text-white p-2 rounded-xl flex flex-col justify-center"
+    >
+      <div class="p-2 bg-rose-950 rounded-xl">
+        {{ message }}
+      </div>
+    </div>
+    } @if(joining_room_status!=="connected"){
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-900 text-white p-2 rounded-xl"
+    >
+      {{ joining_room_status }}
+    </div>
+    } } @else{ @if(who_moves=='circle'){
     <h1 class="text-4xl">circle moves</h1>
     }@else {
     <h1 class="text-4xl">cross moves</h1>
     }}
   </div>
-  @if (mode == 'Online') {
-  <div class="bg-rose-950 text-white rounded-xl p-2 m-2 text-xl">
-    Room id: {{ room_id }}
-  </div>
-  }
   <div>
     <div id="board" class="grid grid-cols-3">
       @for (cells of cell_table;track cells;let iid=$index ) {
@@ -33,7 +57,7 @@
               : 'w-10 h-10 md:w-12 md:h-12 border-2 border-black '
           "
           (click)="
-            cell.is_active
+            cell.is_active && !is_end
               ? mode == 'Online'
                 ? player_char == who_moves
                   ? sendMove(iid, $index)

@@ -12,11 +12,11 @@ public class StttRoomService {
     public String createRoom() {
 
         String roomId;
-        do{
-            roomId = UUID.randomUUID().toString().substring(0,8);
+        do {
+            roomId = UUID.randomUUID().toString().substring(0, 8);
         }
-        while(this.stttRoomExists(roomId));
-        List<String> userList=new ArrayList<>();
+        while (this.stttRoomExists(roomId));
+        List<String> userList = new ArrayList<>();
         stttRooms.put(roomId, userList);
         return roomId;
     }
@@ -24,19 +24,19 @@ public class StttRoomService {
     public boolean stttRoomExists(String roomId) {
         return stttRooms.containsKey(roomId);
     }
+
     public int getUserCountInRoom(String roomId) {
         List<String> users = stttRooms.get(roomId);
         return users != null ? users.size() : 0;
     }
-    public boolean addUserToRoom(String roomId, String userId) {
+
+    public void addUserToRoom(String roomId, String userId) {
         List<String> users = stttRooms.get(roomId);
         if (users.size() < 2) {
             users.add(userId);
-            return true;
-        } else {
-            return false;
         }
     }
+
     public void removeUserFromRoom(String roomId, String userId) {
         List<String> users = stttRooms.get(roomId);
         if (users != null) {
@@ -49,14 +49,14 @@ public class StttRoomService {
 
     public StttRoom changeUserName(StttRoom stttRoom) {
         String anotherUserName;
-        List<String> users=stttRooms.get(stttRoom.getRoomId());
-        if(users.size()<2){
+        List<String> users = stttRooms.get(stttRoom.getRoomId());
+        if (users.size() < 2) {
             throw new RuntimeException("Wait for another player to join");
         }
-        if(Objects.equals(stttRoom.getUserName(), users.getFirst())){
-            anotherUserName=users.get(1);
-        }else{
-            anotherUserName=users.getFirst();
+        if (Objects.equals(stttRoom.getUserName(), users.getFirst())) {
+            anotherUserName = users.get(1);
+        } else {
+            anotherUserName = users.getFirst();
         }
         stttRoom.setUserName(anotherUserName);
         return stttRoom;
@@ -64,5 +64,9 @@ public class StttRoomService {
 
     public String getRoomAdmin(String roomId) {
         return stttRooms.get(roomId).getFirst();
+    }
+
+    public List<String> getRoomUsers(String roomId) {
+        return stttRooms.get(roomId);
     }
 }

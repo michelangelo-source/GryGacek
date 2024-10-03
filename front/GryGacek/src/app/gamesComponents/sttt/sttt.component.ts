@@ -1,7 +1,8 @@
-import { afterNextRender, afterRender, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { ActivatedRoute } from '@angular/router';
 import { StttSocketService } from './sttt.service';
+import { Subscription } from 'rxjs';
 export type stttCell = {
   big_cell_id: number;
   small_cell_id: number;
@@ -25,6 +26,10 @@ export class StttComponent {
     circle: this.circle_path,
     tie: this.draw_path,
   };
+  private stttSocketService = inject(StttSocketService);
+  join_attempts = 0;
+  is_end = false;
+  result: string = '';
   joining_room_status: string = 'Not connected';
   mode: string = 'Local';
   role: string = '';
@@ -39,14 +44,20 @@ export class StttComponent {
   player_char: string = '';
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
-  fail_message!: string;
-  constructor(private stttSocketService: StttSocketService) {}
+  message: string = '';
+
   ngOnDestroy() {
-    this.stttSocketService.leaveRoom();
+    if (this.joining_room_status === 'connected') {
+      this.stttSocketService.dissconect();
+    }
   }
   ngOnInit() {
     this.mode = this.route.snapshot.params['mode'];
+    this.role = this.route.snapshot.params['role'];
+    this.player_nickname = this.route.snapshot.params['player'];
+    this.room_id = this.route.snapshot.params['room'];
     if (this.mode == 'Online') {
+      this.joining_room_status = 'conectting...';
       this.onlineConfig();
     }
     for (let i = 0; i < 9; i++) {
@@ -70,59 +81,75 @@ export class StttComponent {
   }
 
   onlineConfig() {
-    this.role = this.route.snapshot.params['role'];
-    this.player_nickname = this.route.snapshot.params['player'];
-    this.room_id = this.route.snapshot.params['room'];
     this.stttSocketService.getisConnected().subscribe((connected) => {
       if (connected) {
+        console.log('connected: ', connected);
         if (this.role === 'admin') {
           this.player_who_moves = this.player_nickname;
           this.player_char = 'circle';
           this.stttSocketService.createRoom().subscribe((res) => {
             this.room_id = res;
-            this.onlineGame();
+            this.joinRoom();
           });
         } else {
           this.player_char = 'cross';
-          this.onlineGame();
+          this.joinRoom();
         }
       }
     });
     this.stttSocketService.connect();
   }
-  onlineGame() {
-    this.stttSocketService.subscribeToRoom(
-      this.room_id,
-      this.player_nickname,
-      (res) => {
-        if (res.message) {
-          console.log(res);
-          console.log(res.message);
+  joinRoom() {
+    if (this.join_attempts === 0) {
+      this.join_attempts++;
+      this.stttSocketService
+        .joinRoom(this.room_id, this.player_nickname)
+        .subscribe((res) => {
+          this.message = res.message;
+          setTimeout(() => {
+            this.clear_message();
+          }, 2000);
           if (res.joined) {
             this.joining_room_status = 'connected';
             this.player_who_moves = res.userWhoMoves;
-          } else if (
-            res.joined === false &&
-            this.player_nickname === res.userWhoMoves
-          ) {
-            this.stttSocketService.dissconect();
+          } else if (res.joined === false) {
             this.joining_room_status = 'failed';
             this.who_moves = 'nobody';
-            this.fail_message = res.message;
           }
+          this.onlineGame();
+        });
+    }
+  }
+
+  onlineGame() {
+    this.stttSocketService.subscribeToRoom((res) => {
+      let addressees: string[] = res.addressees;
+      let access = false;
+      addressees.forEach((nicknames) => {
+        if (nicknames === this.player_nickname) {
+          access = true;
+        }
+      });
+      if (access) {
+        if (res.message) {
+          this.message = res.message;
+          setTimeout(() => {
+            this.clear_message();
+          }, 2000);
         } else {
-          this.player_who_moves = res.userName;
           this.add_char(res.bigTableId, res.smallTableId);
+          this.player_who_moves = res.userName;
         }
       }
-    );
-    this.joining_room_status = 'conectting...';
-    this.stttSocketService.joinRoom(this.room_id, this.player_nickname);
+    });
   }
   sendMove(bigId: number, smalId: number) {
     this.joining_room_status === 'connected'
       ? this.stttSocketService.sendNumbers(bigId, smalId)
       : null;
+  }
+  clear_message() {
+    this.message = '';
   }
   get_picture_path(result: string) {
     return this.path[result];
@@ -169,7 +196,6 @@ export class StttComponent {
   }
 
   add_char(iid: number, jid: number) {
-    console.log(this.who_moves);
     //zmiana ruchu i znakow
 
     if (this.who_moves == 'cross') {
@@ -233,7 +259,12 @@ export class StttComponent {
     if (this.big_cells_count.circle >= 3 || this.big_cells_count.cross >= 3) {
       let big_result = this.check(this.big_cells_results);
       if (big_result != 'none') {
-        alert(big_result + ' wins');
+        this.is_end = true;
+        if (this.mode === 'Online') {
+          this.result = this.player_who_moves + ' wins';
+        } else {
+          this.result = big_result + ' wins';
+        }
       }
     }
     if (
@@ -242,7 +273,8 @@ export class StttComponent {
         this.big_cells_count.tie >=
       9
     ) {
-      alert('remis');
+      this.is_end = true;
+      this.result = 'draw';
     }
   }
 }

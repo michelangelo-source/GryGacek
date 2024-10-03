@@ -5,6 +5,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { backend_PORT } from '../../../properties';
 import { backend_URL } from '../../../properties';
 import { HttpClient } from '@angular/common/http';
+export type JoinRoomResponse = {
+  message: string;
+  joined: boolean;
+  userWhoMoves: string;
+};
 @Injectable({
   providedIn: 'root',
 })
@@ -14,8 +19,8 @@ export class StttSocketService {
   private roomId: string = ''; // Przechowuje aktualne ID pokoju
   private userId: string = ''; // Przechowuje aktualne ID użytkownika
   private http = inject(HttpClient);
-  private subscription!: StompSubscription;
   constructor() {}
+  ngOnDestroy() {}
   testConnection() {
     if (this.isConnected.value) {
       console.log('Connection is active.');
@@ -62,21 +67,14 @@ export class StttSocketService {
   }
   // Dołączanie do pokoju
   joinRoom(roomId: string, userId: string) {
-    console.log('Join room');
-    if (!this.isConnected.value) {
-      console.error('WebSocket is not connected.');
-      return;
-    }
-
-    // Ustawienie ID pokoju i użytkownika
     this.roomId = roomId;
     this.userId = userId;
-
     const message = { roomId, userId };
-    this.stompClient.publish({
-      destination: '/sttt/joinRoom',
-      body: JSON.stringify(message),
-    }); // Wysłanie informacji o dołączeniu do pokoju
+    console.log(message);
+    return this.http.post<JoinRoomResponse>(
+      backend_URL + ':' + backend_PORT + '/sttt/joinRoom',
+      message
+    );
   }
 
   // Opuść pokój
@@ -116,22 +114,20 @@ export class StttSocketService {
   }
 
   // Subskrypcja na wiadomości dotyczące pokoju (np. status pokoju, odbieranie liczb)
-  subscribeToRoom(
-    roomId: string,
-    userId: string,
-    callback: (message: any) => void
-  ) {
-    this.roomId = roomId;
-    this.userId = userId;
-    this.subscription = this.stompClient.subscribe(
-      `/moves/${this.roomId}`,
-      (message) => {
-        callback(JSON.parse(message.body)); // Odbieranie wiadomości i wywołanie callbacka
-      }
-    );
+  subscribeToRoom(callback: (message: any) => void) {
+    if (this.isConnected.value) {
+      this.stompClient.subscribe(`/moves/${this.roomId}`, (message) => {
+        callback(JSON.parse(message.body));
+      });
+    } else {
+      console.error('Attempt to subscribe without connection');
+    }
   }
+
   dissconect() {
-    this.subscription.unsubscribe();
+    this.roomId = '';
+    this.userId = '';
+    this.stompClient.deactivate({ force: true });
   }
   // Status połączenia WebSocket
   isConnected$() {
