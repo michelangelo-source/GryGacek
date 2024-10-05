@@ -2,7 +2,10 @@ import { Component, inject } from '@angular/core';
 import { BackToMenuComponent } from '../../back-to-menu/back-to-menu.component';
 import { ActivatedRoute } from '@angular/router';
 import { StttSocketService } from './sttt.service';
-import { Subscription } from 'rxjs';
+import {
+  StttOnlineConfig,
+  StttOnlineConfigComponent,
+} from './sttt-online-config/sttt-online-config.component';
 export type stttCell = {
   big_cell_id: number;
   small_cell_id: number;
@@ -13,7 +16,7 @@ export type stttCell = {
 @Component({
   selector: 'app-sttt',
   standalone: true,
-  imports: [BackToMenuComponent],
+  imports: [BackToMenuComponent, StttOnlineConfigComponent],
   templateUrl: './sttt.component.html',
   styleUrl: './sttt.component.scss',
 })
@@ -27,10 +30,11 @@ export class StttComponent {
     tie: this.draw_path,
   };
   private stttSocketService = inject(StttSocketService);
-  join_attempts = 0;
+  subscribe_status: boolean = false;
   is_end = false;
   result: string = '';
-  joining_room_status: string = 'Not connected';
+  get_players: boolean = true;
+  players: string[] = [];
   mode: string = 'Local';
   role: string = '';
   player_nickname: string = '';
@@ -45,21 +49,15 @@ export class StttComponent {
   private big_cells_count = { cross: 0, circle: 0, tie: 0 };
   big_cells_results: stttCell[] = [];
   message: string = '';
+  moves_count: number = 0;
 
   ngOnDestroy() {
-    if (this.joining_room_status === 'connected') {
+    if (this.subscribe_status) {
       this.stttSocketService.dissconect();
     }
   }
   ngOnInit() {
     this.mode = this.route.snapshot.params['mode'];
-    this.role = this.route.snapshot.params['role'];
-    this.player_nickname = this.route.snapshot.params['player'];
-    this.room_id = this.route.snapshot.params['room'];
-    if (this.mode == 'Online') {
-      this.joining_room_status = 'conectting...';
-      this.onlineConfig();
-    }
     for (let i = 0; i < 9; i++) {
       this.big_cells_results.push({
         big_cell_id: i,
@@ -79,74 +77,88 @@ export class StttComponent {
       this.cell_table.push(tmp_cell_table);
     }
   }
-
-  onlineConfig() {
-    this.stttSocketService.getisConnected().subscribe((connected) => {
-      if (connected) {
-        console.log('connected: ', connected);
-        if (this.role === 'admin') {
-          this.player_who_moves = this.player_nickname;
-          this.player_char = 'circle';
-          this.stttSocketService.createRoom().subscribe((res) => {
-            this.room_id = res;
-            this.joinRoom();
-          });
-        } else {
-          this.player_char = 'cross';
-          this.joinRoom();
+  onlineConfig(config: StttOnlineConfig) {
+    this.role = config.role;
+    this.player_nickname = config.player_nickname;
+    if (this.role === 'admin') {
+      this.player_who_moves = this.player_nickname;
+      this.player_char = 'circle';
+      this.stttSocketService.createRoom().subscribe((roomId) => {
+        this.room_id = roomId;
+        this.joinRoom();
+      });
+    } else {
+      config.roomId ? (this.room_id = config.roomId) : null;
+      this.player_char = 'cross';
+      this.joinRoom();
+    }
+  }
+  joinRoom() {
+    this.stttSocketService
+      .joinRoom(this.room_id, this.player_nickname)
+      .subscribe((res) => {
+        this.message = res.message;
+        setTimeout(() => {
+          this.clear_message();
+        }, 2000);
+        if (res.joined) {
+          this.onlineGame();
+        } else if (res.joined === false) {
+          setTimeout(() => {
+            this.role = '';
+          }, 2000);
+          this.who_moves = 'nobody';
         }
+      });
+  }
+
+  onlineGame() {
+    this.stttSocketService.getIsConnected().subscribe((connected) => {
+      if (connected) {
+        this.stttSocketService.subscribeToRoom((res) => {
+          let addressees: string[] = res.addressees;
+          let access = false;
+          addressees.forEach((nicknames) => {
+            if (nicknames === this.player_nickname) {
+              access = true;
+            }
+          });
+          if (access) {
+            if (res.users) {
+              this.players = res.users;
+              this.player_who_moves = this.players[0];
+            } else if (res.message) {
+              this.message = res.message;
+              setTimeout(() => {
+                this.clear_message();
+              }, 2000);
+            } else {
+              this.add_char(res.bigTableId, res.smallTableId);
+              this.moves_count++;
+
+              this.player_who_moves = this.players[this.moves_count % 2];
+            }
+          }
+        });
+      }
+    });
+    this.stttSocketService.getIsSubscribed().subscribe((subscribed) => {
+      if (subscribed) {
+        this.subscribe_status = true;
+        this.stttSocketService.getPlayers();
       }
     });
     this.stttSocketService.connect();
   }
-  joinRoom() {
-    if (this.join_attempts === 0) {
-      this.join_attempts++;
-      this.stttSocketService
-        .joinRoom(this.room_id, this.player_nickname)
-        .subscribe((res) => {
-          this.message = res.message;
-          setTimeout(() => {
-            this.clear_message();
-          }, 2000);
-          if (res.joined) {
-            this.joining_room_status = 'connected';
-            this.player_who_moves = res.userWhoMoves;
-          } else if (res.joined === false) {
-            this.joining_room_status = 'failed';
-            this.who_moves = 'nobody';
-          }
-          this.onlineGame();
-        });
-    }
-  }
-
-  onlineGame() {
-    this.stttSocketService.subscribeToRoom((res) => {
-      let addressees: string[] = res.addressees;
-      let access = false;
-      addressees.forEach((nicknames) => {
-        if (nicknames === this.player_nickname) {
-          access = true;
-        }
-      });
-      if (access) {
-        if (res.message) {
-          this.message = res.message;
-          setTimeout(() => {
-            this.clear_message();
-          }, 2000);
-        } else {
-          this.add_char(res.bigTableId, res.smallTableId);
-          this.player_who_moves = res.userName;
-        }
-      }
-    });
-  }
   sendMove(bigId: number, smalId: number) {
-    this.joining_room_status === 'connected'
-      ? this.stttSocketService.sendNumbers(bigId, smalId)
-      : null;
+    if (this.players.length < 2) {
+      this.message = 'Wait for another player';
+      setTimeout(() => {
+        this.clear_message();
+      }, 2000);
+    } else {
+      this.stttSocketService.sendNumbers(bigId, smalId);
+    }
   }
   clear_message() {
     this.message = '';
@@ -197,7 +209,6 @@ export class StttComponent {
 
   add_char(iid: number, jid: number) {
     //zmiana ruchu i znakow
-
     if (this.who_moves == 'cross') {
       this.who_moves = 'circle';
       this.cell_table[iid][jid].char = 'cross';

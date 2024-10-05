@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class LeaveRoomRequest {
     private String roomId;
-    private String userId;
+    private String userNickname;
 }

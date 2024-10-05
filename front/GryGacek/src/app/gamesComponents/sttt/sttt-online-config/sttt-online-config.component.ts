@@ -1,21 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BackToMenuComponent } from '../../../back-to-menu/back-to-menu.component';
-import { RouterModule } from '@angular/router';
 
+export type StttOnlineConfig = {
+  player_nickname: string;
+  role: string;
+  roomId?: string;
+};
 @Component({
   selector: 'app-sttt-online-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, BackToMenuComponent, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './sttt-online-config.component.html',
   styleUrl: './sttt-online-config.component.scss',
 })
 export class StttOnlineConfigComponent {
   player_nickname: string = '';
-  is_joining: boolean = false;
+  role: string = '';
+  step: string = 'nickname';
   roomId: string = '';
-  joining_room() {
-    this.is_joining = true;
+  onlineConfig = output<StttOnlineConfig>();
+  onSubmit() {
+    if (this.player_nickname.length > 0) {
+      this.step = 'role';
+    }
+  }
+  setRole(role: string) {
+    this.role = role;
+    if (role === 'admin') {
+      this.onlineConfig.emit({
+        player_nickname: this.player_nickname,
+        role: this.role,
+      });
+    } else {
+      this.step = 'insertRoomId';
+    }
+  }
+  joinRoom() {
+    this.onlineConfig.emit({
+      player_nickname: this.player_nickname,
+      role: this.role,
+      roomId: this.roomId,
+    });
   }
 }

@@ -8,7 +8,6 @@ import { HttpClient } from '@angular/common/http';
 export type JoinRoomResponse = {
   message: string;
   joined: boolean;
-  userWhoMoves: string;
 };
 @Injectable({
   providedIn: 'root',
@@ -16,10 +15,12 @@ export type JoinRoomResponse = {
 export class StttSocketService {
   private stompClient: Client = new Client();
   private isConnected = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
+  private isSubscribed = new BehaviorSubject<boolean>(false); // Do śledzenia statusu połączenia WebSocket
   private roomId: string = ''; // Przechowuje aktualne ID pokoju
-  private userId: string = ''; // Przechowuje aktualne ID użytkownika
+  private userNickname: string = ''; // Przechowuje aktualne ID użytkownika
   private http = inject(HttpClient);
-  constructor() {}
+  private subscription?: StompSubscription;
+
   ngOnDestroy() {}
   testConnection() {
     if (this.isConnected.value) {
@@ -28,8 +29,11 @@ export class StttSocketService {
       console.error('No active connection.');
     }
   }
-  getisConnected() {
+  getIsConnected() {
     return this.isConnected;
+  }
+  getIsSubscribed() {
+    return this.isSubscribed;
   }
   // Połączenie z serwerem WebSocket
   connect() {
@@ -66,11 +70,11 @@ export class StttSocketService {
     );
   }
   // Dołączanie do pokoju
-  joinRoom(roomId: string, userId: string) {
+  joinRoom(roomId: string, userNickname: string) {
     this.roomId = roomId;
-    this.userId = userId;
-    const message = { roomId, userId };
-    console.log(message);
+    this.userNickname = userNickname;
+    const message = { roomId, userNickname };
+
     return this.http.post<JoinRoomResponse>(
       backend_URL + ':' + backend_PORT + '/sttt/joinRoom',
       message
@@ -79,24 +83,30 @@ export class StttSocketService {
 
   // Opuść pokój
   leaveRoom() {
-    if (!this.roomId || !this.userId) {
+    if (!this.roomId || !this.userNickname) {
       console.error('No room or user ID specified.');
       return;
     }
 
-    const message = { roomId: this.roomId, userId: this.userId };
+    const message = { roomId: this.roomId, userNickname: this.userNickname };
     this.stompClient.publish({
       destination: '/sttt/leaveRoom',
       body: JSON.stringify(message),
     }); // Informacja o opuszczeniu pokoju
 
     this.roomId = ''; // Resetujemy ID pokoju
-    this.userId = ''; // Resetujemy ID użytkownika
+    this.userNickname = ''; // Resetujemy ID użytkownika
   }
-
+  getPlayers() {
+    const message = { roomId: this.roomId, userNickname: this.userNickname };
+    this.stompClient.publish({
+      destination: '/sttt/getUsersInRoom',
+      body: JSON.stringify(message),
+    });
+  }
   // Wysyłanie liczb (liczba1 i liczba2) do pokoju
   sendNumbers(number1: number, number2: number) {
-    if (!this.roomId || !this.userId) {
+    if (!this.roomId || !this.userNickname) {
       console.error('No room or user ID specified.');
       return;
     }
@@ -105,7 +115,6 @@ export class StttSocketService {
       roomId: this.roomId,
       bigTableId: number1,
       smallTableId: number2,
-      userName: this.userId,
     };
     this.stompClient.publish({
       destination: '/sttt/sendIds',
@@ -115,19 +124,31 @@ export class StttSocketService {
 
   // Subskrypcja na wiadomości dotyczące pokoju (np. status pokoju, odbieranie liczb)
   subscribeToRoom(callback: (message: any) => void) {
-    if (this.isConnected.value) {
-      this.stompClient.subscribe(`/moves/${this.roomId}`, (message) => {
-        callback(JSON.parse(message.body));
-      });
+    this.subscription = undefined;
+    this.isSubscribed.next(false);
+    if (this.isConnected.value && !this.isSubscribed.value) {
+      this.subscription = this.stompClient.subscribe(
+        `/moves/${this.roomId}`,
+        (message) => {
+          callback(JSON.parse(message.body));
+        }
+      );
+      this.isSubscribed.next(true);
     } else {
       console.error('Attempt to subscribe without connection');
     }
   }
 
   dissconect() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = undefined;
+    }
+    this.stompClient.deactivate();
+    this.isConnected.next(false);
+    this.isSubscribed.next(false);
     this.roomId = '';
-    this.userId = '';
-    this.stompClient.deactivate({ force: true });
+    this.userNickname = '';
   }
   // Status połączenia WebSocket
   isConnected$() {

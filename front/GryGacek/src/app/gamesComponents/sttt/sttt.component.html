@@ -1,4 +1,9 @@
 <app-back-to-menu></app-back-to-menu>
+@if(role===''&&mode==="Online"){
+<app-sttt-online-config
+  (onlineConfig)="onlineConfig($event)"
+></app-sttt-online-config>
+}@else {
 <div class="w-svh h-svh flex items-center flex-col">
   @if(is_end){
   <div
@@ -25,12 +30,6 @@
       <div class="p-2 bg-rose-950 rounded-xl">
         {{ message }}
       </div>
-    </div>
-    } @if(joining_room_status!=="connected"){
-    <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-900 text-white p-2 rounded-xl"
-    >
-      {{ joining_room_status }}
     </div>
     } } @else{ @if(who_moves=='circle'){
     <h1 class="text-4xl">circle moves</h1>
@@ -89,3 +88,4 @@
     </div>
   </div>
 </div>
+}

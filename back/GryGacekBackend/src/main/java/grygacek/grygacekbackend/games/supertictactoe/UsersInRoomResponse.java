@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class JoinRoomResponse {
-    private String message;
-    private boolean joined;
+public class UsersInRoomResponse {
+    private List<String> users;
+    private List<String> addressees;
 }

@@ -11,12 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StttRoom {
+public class StttMove {
     private String roomId;
     private int bigTableId;
     private int smallTableId;
-    private String userName;
     private List<String> addressees;
-    public StttRoom(String roomId) {
-    }
 }

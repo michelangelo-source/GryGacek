@@ -9,7 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ExceptionDTO {
+public class LeaveRoomResponse {
     private String message;
+    private String userNickname;
     private List<String> addressees;
 }

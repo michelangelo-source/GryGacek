@@ -20,7 +20,7 @@ export const routes: Routes = [
     title: 'Minesweeper',
   },
   {
-    path: 'sttt/:mode/:role/:player/:room',
+    path: 'sttt/:mode',
     component: StttComponent,
     title: 'Super Tic-tac-toe',
   },
@@ -28,11 +28,6 @@ export const routes: Routes = [
     path: 'sttt_menu',
     component: StttMenuComponent,
     title: 'Super Tic-tac-toe Menu',
-  },
-  {
-    path: 'sttt_online',
-    component: StttOnlineConfigComponent,
-    title: 'Super Tic-tac-toe Online',
   },
   {
     path: 'tetris',
