@@ -2,12 +2,15 @@ package grygacek.grygacekbackend.games.supertictactoe;
 
 import java.util.*;
 
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableScheduling
 public class StttRoomService {
     private final Map<String, List<String>> stttRooms = new HashMap<>();
-
+    private final Map<String, Date> stttRoomsDate = new HashMap<>();
 
     public String createRoom() {
 
@@ -18,6 +21,7 @@ public class StttRoomService {
         while (this.stttRoomExists(roomId));
         List<String> userList = new ArrayList<>();
         stttRooms.put(roomId, userList);
+        stttRoomsDate.put(roomId, new Date());
         return roomId;
     }
 
@@ -46,7 +50,21 @@ public class StttRoomService {
             }
         }
     }
+
     public List<String> getRoomUsers(String roomId) {
         return stttRooms.get(roomId);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void cleanupRooms() {
+        Date twoDaysAgo = new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000);
+        Iterator<Map.Entry<String, Date>> iterator = stttRoomsDate.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Date> entry = iterator.next();
+            if (entry.getValue().before(twoDaysAgo)) {
+                stttRooms.remove(entry.getKey());
+                iterator.remove();
+            }
+        }
     }
 }
