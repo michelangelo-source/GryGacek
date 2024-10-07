@@ -126,7 +126,7 @@ export class StttSocketService {
   subscribeToRoom(callback: (message: any) => void) {
     this.subscription = undefined;
     this.isSubscribed.next(false);
-    if (this.isConnected.value && !this.isSubscribed.value) {
+    if (this.isConnected.value) {
       this.subscription = this.stompClient.subscribe(
         `/moves/${this.roomId}`,
         (message) => {

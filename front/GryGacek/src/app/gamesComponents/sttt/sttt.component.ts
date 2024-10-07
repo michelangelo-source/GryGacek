@@ -39,8 +39,6 @@ export class StttComponent {
   role: string = '';
   player_nickname: string = '';
   room_id: string = '';
-  opponent_move_big_table: number = -1;
-  opponent_move_small_table: number = -1;
   route: ActivatedRoute = inject(ActivatedRoute);
   cell_table: stttCell[][] = [];
   who_moves: string = 'circle';
