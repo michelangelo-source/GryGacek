@@ -1,8 +1,6 @@
 package grygacek.grygacekbackend.games.kulki;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +16,12 @@ import java.time.LocalDate;
 @Table(name="kulki_result")
 public class KulkiResult {
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private String nickname;
+    @Column(nullable = false)
     private int result;
+    @Column(nullable = false)
     private LocalDate date;
-
-
-
-
 }

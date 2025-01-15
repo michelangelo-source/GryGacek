@@ -1,8 +1,6 @@
 package grygacek.grygacekbackend.games.tetris;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +16,13 @@ import java.time.LocalDate;
 @Table(name="tetris_result")
 public class TetrisResult {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
+    @Column(nullable = false)
     private String nickname;
+    @Column(nullable = false)
     private int result;
+    @Column(nullable = false)
     private LocalDate date;
 
 

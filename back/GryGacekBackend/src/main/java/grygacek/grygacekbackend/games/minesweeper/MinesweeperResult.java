@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.sql.Timestamp;
 import java.time.LocalDate;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,13 +16,21 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "minesweeper_results")
 public class MinesweeperResult {
-    @Id
-    private long id;
-    @ManyToOne
-    @JoinColumn(name = "game_mode_id")
-    private MinesweeperGameModes gameMode;
-    private String nickname;
-    private Timestamp result;
-    private LocalDate date;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "game_mode_id", nullable = false)
+    private MinesweeperGameModes gameMode;
+
+    @Column(nullable = false)
+    private String nickname;
+
+    @Column(nullable = false)
+    private Timestamp result;
+
+    @Column(nullable = false)
+    private LocalDate date;
 }
