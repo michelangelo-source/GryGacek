@@ -14,13 +14,13 @@
 # Installation
 
 ## Backend
-1. Insert the correct database configuration in `application.properties` located at:  
-   `src/main/resources/application.properties`.
 
-2. Clone the repository and navigate to the backend folder:
+1. Clone the repository and navigate to the backend folder:
    ```bash
    git clone https://github.com/michelangelo-source/GryGacek
    cd ./back/GryGacekBackend/
+2. Insert the correct database configuration in `application.properties` located at:  
+   `src/main/resources/application.properties`.
 3. Install Maven dependencies and run the application:
    - Install dependencies:
      ```bash
